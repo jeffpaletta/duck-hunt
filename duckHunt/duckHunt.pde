@@ -187,17 +187,17 @@ void setup() {
   numUsersLess = 0;
   numUsersEqual = 0;
   
-  for (int i = 0; i < joinedData.length(); i++) {
-   if (joinedData.charAt(i) == '1') { dataCounter1++; }
-   else if (joinedData.charAt(i) == '2') { dataCounter2++; }
-   else if (joinedData.charAt(i) == '3') { dataCounter3++; }
-   else if (joinedData.charAt(i) == '4') { dataCounter4++; }
-   else if (joinedData.charAt(i) == '5') { dataCounter5++; }
-   else if (joinedData.charAt(i) == '6') { dataCounter6++; }
-   else if (joinedData.charAt(i) == '7') { dataCounter7++; }
-   else if (joinedData.charAt(i) == '8') { dataCounter8++; }
-   else {}
-  }
+  //for (int i = 0; i < joinedData.length(); i++) {
+  // if (joinedData.charAt(i) == '1') { dataCounter1++; }
+  // else if (joinedData.charAt(i) == '2') { dataCounter2++; }
+  // else if (joinedData.charAt(i) == '3') { dataCounter3++; }
+  // else if (joinedData.charAt(i) == '4') { dataCounter4++; }
+  // else if (joinedData.charAt(i) == '5') { dataCounter5++; }
+  // else if (joinedData.charAt(i) == '6') { dataCounter6++; }
+  // else if (joinedData.charAt(i) == '7') { dataCounter7++; }
+  // else if (joinedData.charAt(i) == '8') { dataCounter8++; }
+  // else {}
+  //}
   
     noCursor();
 
@@ -241,7 +241,7 @@ class Target {
         else if (level==4) { image(target1, -xTarget, yTarget); }
         else if (level==5) { image(target1, -xTarget, yTarget); }
         else if (level==6) { image(target1, -xTarget, yTarget); }
-        else if (level==7) { image(target1, -xTarget, yTarget); }
+        //else if (level==7) { image(target1, -xTarget, yTarget); }
         else {  }
           
         scale(-1.0, 1.0);
@@ -433,7 +433,7 @@ void draw() {
     background(0); 
     //image(duckhuntingbeginningscreen, width/2-210, 50); 
     textAlign(CENTER);
-    text("press A to begin", width/2, height/2+150);
+    text("press 1 to begin", width/2, height/2+150);
     if (keyPressed) {
       frameCount = 0;
       state = 0;
@@ -444,7 +444,7 @@ void draw() {
     textAlign(CENTER);
     textSize(50);
     text("Level " + (level+1), width/2, height/2);
-    text("Press A to Continue", width/2, height/2+50);
+    text("Press 1 to Continue", width/2, height/2+50);
     lives = 5;
     if (keyPressed&&(frameCount-levelFrame)>=1300) {
       targets.clear();
@@ -453,10 +453,14 @@ void draw() {
       lives = 5;
       numBullets = 6;
       level++;
+      
       specialtargethit=false;
       targets1.remove(0);
       state = 0;
     }
+  }
+  if (level == 7) {
+    state = 4;
   }
 }
 
@@ -489,7 +493,7 @@ void keyReleased() {
   if (key=='s') {
     //javax.swing.JOptionPane.showOptionDialog(frame,"Are you sure you want to shoot?");
 
-    int userInput = JOptionPane.showOptionDialog(frame, "Are you sure you want to shoot?", " ", 
+    int userInput = JOptionPane.showOptionDialog(frame, "Are you sure you want to shoot?", "Press A to select", 
       JOptionPane.YES_NO_CANCEL_OPTION, 
       JOptionPane.QUESTION_MESSAGE, 
       null, 
@@ -655,7 +659,7 @@ void keyReleased() {
       text(("but " + numUsersLess + "% of players put the "), (width/2 - 100), (height/2 + 80));
       text(("gun down before you did"), (width/2 - 100), (height/2 + 110));
       textSize(18);
-      text("press A to exit",(width/2 - 100), (height/2 + 310));
+      text("press 2 to exit",(width/2 - 100), (height/2 + 310));
       appendTextToFile(outFilename, str(maxLevel));
 
       }
