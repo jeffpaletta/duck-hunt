@@ -1,6 +1,8 @@
 /* Duck Hunt Version 2*/
 
 PImage backgroundImg;
+PImage backgroundImg2;
+
 PImage duck;
 PImage shotgun;
 PImage bullet;
@@ -15,11 +17,12 @@ boolean goldDuckShot = false;
 
 void setup() {
   size(700, 600);  
-  backgroundImg = loadImage("background2.jpg");
+  backgroundImg = loadImage("background_image.jpg");
+  backgroundImg2 = loadImage("background2.jpg");
   duck = loadImage("duck.png");
   shotgun = loadImage("shotgun.png");
   bullet = loadImage("bullet.png");
-  goldenduck = loadImage("duck.png");
+  goldenduck = loadImage("student.png");
   duckhuntingbeginningscreen = loadImage("duckhuntingbeginningscreen.jpg");
   explosion = loadImage("explosion.png");
   roastduck = loadImage("roastduck.png");
@@ -107,6 +110,8 @@ ArrayList <Goduck> ducks1 = new ArrayList<Goduck>();
 //image(images.get(0),  123, 234 );
 ArrayList <PImage> bullets = new ArrayList<PImage>(); 
 void draw() {
+    println((stage) + (state));
+
   if (state == 0) {
     timeLeft=(int)(60-(((frameCount-stageFrame)%1200)/60));
     if (lives<=0) {
@@ -143,7 +148,13 @@ void draw() {
         }
         ducks.add(new Duck(derpx, derpy, derpsplit));
       }
-      image(backgroundImg, 0, 0);
+      if (stage==1){
+        image(backgroundImg, 0, 0);
+      } else if (stage==2){
+        image(backgroundImg2, 0, 0);
+      } else {
+        image(backgroundImg2, 0, 0);
+      }
       if ((frameCount-stageFrame)%1200==600) {
         ducks1.add(new Goduck(0, (int)random(50, height-50)));
       }
@@ -176,14 +187,14 @@ void draw() {
         state = 1;
       }
       fill(255);
-      textSize(10);
+      textSize(24);
       textAlign(RIGHT);
       text("score: "+score, width-10, 50);
       text("lives: "+lives, width-10, 70);
       //text("highscore: "+highscore, width-10, 30);
-      //text("Time Left: "+timeLeft, width-10, 90);
-      //textAlign(LEFT);
-      //image(bullet,0,540);
+      text("Time Left: "+timeLeft, width-10, 90);
+      textAlign(LEFT);
+      image(bullet,0,540);
       //text("Bullets: "+numBullets, 10, 590);
       for (int j = 0 ; j < numBullets; j++) {
         if (state==0) {
@@ -196,7 +207,7 @@ void draw() {
     background(0); 
     //image(duckhuntingbeginningscreen, width/2-210, 50); 
     textAlign(CENTER);
-    text("Intro page \n press any key to shoot stuff", width/2, height/2+150);
+    text("Intro page \n press enter to begin", width/2, height/2+150);
     if (keyPressed) {
       frameCount = 0;
       state = 0;
@@ -207,9 +218,9 @@ void draw() {
     textAlign(CENTER);
     textSize(50);
     text("Stage " + (stage+1), width/2, height/2);
-    text("Click to Continue", width/2, height/2+50);
+    text("Press Enter to Continue", width/2, height/2+50);
     lives = 5;
-    if (mousePressed&&(frameCount-stageFrame)>=1300) {
+    if (keyPressed&&(frameCount-stageFrame)>=1300) {
       ducks.clear();
       stageFrame = frameCount;
       //frameCount=0;
@@ -220,6 +231,7 @@ void draw() {
       ducks1.remove(0);
       state = 0;
     }
+
   }
 }
 void keyPressed() {
