@@ -7,8 +7,8 @@ import gifAnimation.*;
 import ddf.minim.*;
 import ddf.minim.ugens.*;
 import javax.swing.JOptionPane; 
-import java.io.FileWriter;
-import java.io.BufferedWriter;
+//import java.io.FileWriter;
+//import java.io.BufferedWriter;
 import controlP5.*;
 
 
@@ -42,7 +42,7 @@ PImage levelinfo1, levelinfo2, levelinfo3, levelinfo4, levelinfo5, levelinfo6;
 PImage target1, targethit1, specialtarget1;
 PImage crosshair, bullet, explosion;
 
-int state=2, level = 1, numBullets = 6, lastClear = 0, lastReload = 0, levelFrame = 0, lives = 5, score, highscore, timeLeft;
+int state=2, level = 1, numBullets = 5, lastClear = 0, lastReload = 0, levelFrame = 0, lives = 5, score, highscore, timeLeft;
 boolean dead = false;
 boolean shoot = false;
 boolean specialtargethit = false;
@@ -295,7 +295,7 @@ void draw() {
   }
 
   if (state == 0) {
-    timeLeft=(int)(60-(((frameCount-levelFrame)%1200)/60));
+    timeLeft=(int)(20-(((frameCount-levelFrame)%1200)/60));
     if (lives<=0) {
       background(255, 0, 0);
       textSize(50);
@@ -305,7 +305,7 @@ void draw() {
         targets.clear();
         score = 0;
         lives = 5;
-        numBullets = 6;
+        numBullets = 5;
         level = 1;
         levelFrame=0;
         lastReload = 0;
@@ -394,7 +394,7 @@ void draw() {
       //text("highscore: "+highscore, width-10, 30);
       text("time: "+timeLeft, width-20, 120);
       textAlign(LEFT);
-      image(bullet, 1170, 120);
+//      image(bullet, 1190, 120);
       //text("Bullets: "+numBullets, 10, 590);
       for (int j = 0; j < numBullets; j++) {
         if (state==0) {
@@ -449,14 +449,14 @@ void draw() {
     textAlign(CENTER);
     textSize(18);
 //    text("Level " + (level+1), width/2, height/2);
-    text("Press 1 to Continue", width/2+5, height/2+100);
+    text("Press Enter to Continue", width/2+5, height/2+100);
     lives = 5;
     if (keyPressed&&(frameCount-levelFrame)>=1300) {
       targets.clear();
       levelFrame = frameCount;
       //frameCount=0;
       lives = 5;
-      numBullets = 6;
+      numBullets = 5;
       level++;
       
       specialtargethit=false;
@@ -485,6 +485,13 @@ void draw() {
   popMatrix();
 
   }
+  
+  if (numBullets == 0) {
+    textSize(18);
+    textAlign(CENTER);
+    fill(255,0,0);
+    text("Press \"R\" to Reload", (mouseX ), (mouseY-50));
+  }
 }
 
 
@@ -504,6 +511,16 @@ void keyPressed() {
     reload1.play();
   }
 
+    if (key=='q'){
+      state = 0;
+      setup();
+      draw();
+      frameCount = 0;
+  }
+  if (key=='m'){
+//      noLoop();
+    state = 4;
+  }
 
   if ((key=='d') || (key=='D')) {
   }
@@ -513,11 +530,11 @@ void keyPressed() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void keyReleased() {
-  if (key=='s') {
+void mousePressed() {
+  if ((mousePressed) && (state !=2) {
     //javax.swing.JOptionPane.showOptionDialog(frame,"Are you sure you want to shoot?");
 
-    int userInput = JOptionPane.showOptionDialog(frame, "Are you sure you want to shoot?", "Press A to select", 
+    int userInput = JOptionPane.showOptionDialog(frame, "Are you sure you want to shoot?", "Click to select", 
       JOptionPane.YES_NO_CANCEL_OPTION, 
       JOptionPane.QUESTION_MESSAGE, 
       null, 
@@ -676,21 +693,17 @@ void keyReleased() {
     } 
     if ((userInput == 1) && (frameCount - lastReload>=60)) {
       noCursor();
-      state = 4;
+      state = 2;
+      setup();
+      draw();
+      frameCount = 0;
+      score = 0;
       
 
       }
       //else{}
     }
-    if (key=='q'){
-      state = 2;
-      setup();
-      draw();
-  }
-  if (key=='m'){
-//      noLoop();
-    state = 4;
-  }
+
 }
 
 
@@ -698,28 +711,4 @@ void keyReleased() {
 
 
 
-void appendTextToFile(String filename, String text){
-  File f = new File(dataPath(filename));
-  if(!f.exists()){
-    createFile(f);
-  }
-  try {
-    PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(f, true)));
-    out.println(text);
-    out.close();
-  }catch (IOException e){
-      e.printStackTrace();
-  }
-}
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void createFile(File f){
-  File parentDir = f.getParentFile();
-  try{
-    parentDir.mkdirs(); 
-    f.createNewFile();
-  }catch(Exception e){
-    e.printStackTrace();
-  }
-}    
