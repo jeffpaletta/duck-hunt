@@ -1,15 +1,19 @@
-//import processing.video.*;
+import ddf.minim.spi.*;
+import ddf.minim.signals.*;
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+import ddf.minim.ugens.*;
+import ddf.minim.effects.*;
 
 /* Duck Hunt Version 8*/
 ////////////////////////////////////////////////////////////
 import gifAnimation.*;
-import ddf.minim.*;
-import ddf.minim.ugens.*;
-import javax.swing.JOptionPane; 
+//import ddf.minim.*;
+//import ddf.minim.ugens.*;
+import javax.swing.JOptionPane;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import controlP5.*;
-
 
 String[] data;
 String joinedData, convertJoinedData;
@@ -18,10 +22,6 @@ int maxLevel = 0, numUsersMore = 0, numUsersLess = 0, numUsersEqual = 0;
 int dataCounter1 = 0, dataCounter2 = 0, dataCounter3 = 0, dataCounter4 = 0, dataCounter5 = 0, dataCounter6 = 0, dataCounter7 = 0, dataCounter8 = 0;
 
 PFont font;
-
-PImage[] sbar = new PImage[25];
-int scalc;
-
 
 Minim minim;
 AudioPlayer emptygun;
@@ -34,7 +34,6 @@ AudioPlayer ambient1, ambient2, ambient3, ambient4, ambient5, ambient6, ambient7
 Gif duckLoop, bgloopStart, bgloop1, bgloop2, bgloop3, bgloop4, bgloop5, bgloop6;
 
 PImage startScreen, background1, background2, background3, background4, background5, background6, background7;
-PImage levelinfo1, levelinfo2, levelinfo3, levelinfo4, levelinfo5, levelinfo6;
 PImage target1, targethit1, specialtarget1;
 PImage crosshair, bullet, explosion;
 
@@ -44,38 +43,30 @@ boolean shoot = false;
 boolean specialtargethit = false;
 Object[] options = {"Yes", "No"};
 
+Button buttonYes, buttonNo;
+boolean popup = false;
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void setup() {
   size(1280, 720);
   noCursor();
-  
-  font = createFont("PressStart2P.ttf", 36);
-  textFont(font);
-  
-  for (int i = 0; i < sbar.length; i++){
-    sbar[i] = loadImage("graphics/score/Score_" + i + ".png");
-  }
-  
+
+   buttonYes = new Button((width/2-100),height/2,80,40,"Yes");
+   buttonNo = new Button((width/2+20),height/2,80,40,"No");
+
   crosshair = loadImage("graphics/crosshair.png");
   bullet = loadImage("graphics/bullet.png");
   explosion = loadImage("graphics/explosion.png");
-  startScreen = loadImage("graphics/backgrounds/start_screen.jpg");  
+  startScreen = loadImage("graphics/backgrounds/start_screen.jpg");
   background1 = loadImage("graphics/backgrounds/level1.jpg");
   background2 = loadImage("graphics/backgrounds/level2.jpg");
   background3 = loadImage("graphics/backgrounds/level3.jpg");
   background4 = loadImage("graphics/backgrounds/level4.jpg");
-  background5 = loadImage("graphics/backgrounds/level5.jpg");  
-  background6 = loadImage("graphics/backgrounds/level6.jpg");  
-  background7 = loadImage("graphics/backgrounds/level7.jpg");  
+  background5 = loadImage("graphics/backgrounds/level5.jpg");
+  background6 = loadImage("graphics/backgrounds/level6.jpg");
+  background7 = loadImage("graphics/backgrounds/level7.jpg");
   targethit1 = loadImage("graphics/targets/targethit1.png");
-  
-  levelinfo1 = loadImage("graphics/rounds/Round01.png");
-  levelinfo2 = loadImage("graphics/rounds/Round02.png");
-  levelinfo3 = loadImage("graphics/rounds/Round03.png");
-  levelinfo4 = loadImage("graphics/rounds/Round04.png");
-  levelinfo5 = loadImage("graphics/rounds/Round05.png");
-  levelinfo6 = loadImage("graphics/rounds/Round06.png");
 
   duckLoop = new Gif(this, "graphics/targets/duck.gif");  duckLoop.loop();
   bgloopStart = new Gif(this, "graphics/targets/bgloopStart.gif");  bgloopStart.loop();
@@ -95,10 +86,10 @@ void setup() {
   targetHit1 = minim.loadFile("audio/quack1.mp3");
   targetHit2 = minim.loadFile("audio/quack2.mp3");
   gunshot1 = minim.loadFile("audio/gunshot1.mp3");
-  gunshot2 = minim.loadFile("audio/gunshot2.mp3");  
+  gunshot2 = minim.loadFile("audio/gunshot2.mp3");
   reload1 = minim.loadFile("audio/reload1.mp3");
-  reload2 = minim.loadFile("audio/reload2.mp3");  
-  
+  reload2 = minim.loadFile("audio/reload2.mp3");
+
   childrenscream = minim.loadFile("audio/childrenscream.mp3");
   gunshotburst = minim.loadFile("audio/gunshotburst.mp3");
   manshot1 = minim.loadFile("audio/manshot1.mp3");
@@ -108,7 +99,7 @@ void setup() {
   quack1 = minim.loadFile("audio/quack1.mp3");
   quack2 = minim.loadFile("audio/quack2.mp3");
   targethit33 = minim.loadFile("audio/targethit33.mp3");
-  
+
 //  ambient1 = minim.loadFile("audio/ambient/ambient1.mp3");
 //  ambient2 = minim.loadFile("audio/ambient/ambient2.mp3");
 //  ambient3 = minim.loadFile("audio/ambient/ambient3.mp3");
@@ -117,7 +108,7 @@ void setup() {
 //  ambient6 = minim.loadFile("audio/ambient/ambient6.mp3");
 //  ambient1 = minim.loadFile("audio/ambient/ambient1.mp3");
 
-  
+
 ///////////////////////////
 //     DATA TRACKING     //
 ///////////////////////////
@@ -125,18 +116,18 @@ void setup() {
 //  data = loadStrings("data.txt");
 //  joinedData = join(data, " ");
   //convertJoinedData = Integer.parseInt(joinedData);
-  dataCounter1 = 0; 
-  dataCounter2 = 0; 
-  dataCounter3 = 0; 
-  dataCounter4 = 0; 
-  dataCounter5 = 0; 
-  dataCounter6 = 0; 
-  dataCounter7 = 0; 
+  dataCounter1 = 0;
+  dataCounter2 = 0;
+  dataCounter3 = 0;
+  dataCounter4 = 0;
+  dataCounter5 = 0;
+  dataCounter6 = 0;
+  dataCounter7 = 0;
   dataCounter8 = 0;
   numUsersMore = 0;
   numUsersLess = 0;
   numUsersEqual = 0;
-  
+
   //for (int i = 0; i < joinedData.length(); i++) {
   // if (joinedData.charAt(i) == '1') { dataCounter1++; }
   // else if (joinedData.charAt(i) == '2') { dataCounter2++; }
@@ -152,7 +143,23 @@ void setup() {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+class Button{
+  int xpos, ypos, wid, hei;
+  String label;
+  boolean over = false;
+  boolean down = false;
+  boolean clicked = false;
+  Button(
+  int tx, int ty,
+  int tw, int th,
+  String tlabel
+  ){
+    xpos = tx;
+    ypos = ty;
+    wid = tw;
+    hei = th;
+    label = tlabel;
+  }
 
 class Target {
   boolean flip = false;
@@ -168,23 +175,23 @@ class Target {
     vx=level;
     yTarget = y;
   }
-  
-  
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  
-  
+
+
   void display() {
 
-    if (flip) { 
+    if (flip) {
       pushMatrix();
       if (shot)image(targethit1, xTarget, yTarget);
-      else { 
+      else {
         scale(-1.0, 1.0);
-        
-      if (level==1) { 
+
+      if (level==1) {
       image(target1, -xTarget, yTarget);
       duckLoop.loop();
-      duckLoop.play();   
+      duckLoop.play();
     }
         else if (level==1) { image(target1, -xTarget, yTarget); }
         else if (level==2) { image(target1, -xTarget, yTarget); }
@@ -195,7 +202,7 @@ class Target {
         //else if (level==7) { image(target1, -xTarget, yTarget); }
         else {  }
         duckLoop.loop();
-        duckLoop.play();  
+        duckLoop.play();
         scale(-1.0, 1.0);
       }
       popMatrix();
@@ -231,17 +238,17 @@ class specialTarget {
     vx=level*2;
     yTarget1 = y;
   }
-  
-  
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  
-  
+
+
   void display() {
     if (shot) {
       yTarget1+=15;
       vx=0;
     }
-    if (flip) { 
+    if (flip) {
       pushMatrix();
       scale(-1.0, 1.0);
       image(specialtarget1, -xTarget1, yTarget1);
@@ -257,6 +264,52 @@ class specialTarget {
   }
 }
 
+void update(){
+    //it is important that this comes first
+    if(down&&over&&!mousePressed){
+      clicked=true;
+    }else{
+      clicked=false;
+    }
+
+    //UP OVER AND DOWN STATE CONTROLS
+    if(mouseX>xpos && mouseY>ypos && mouseX<xpos+wid && mouseY<ypos+hei){
+      over=true;
+      if(mousePressed){
+        down=true;
+      }else{
+        down=false;
+      }
+    }else{
+      over=false;
+    }
+    smooth();
+
+    //box color controls
+    if(!over){
+      fill(255);
+    }else{
+      if(!down){
+        fill(100);
+      }else{
+        fill(0);
+      }
+    }
+    stroke(0);
+    rect(xpos, ypos, wid, hei, 3);//draws the rectangle, the last param is the round corners
+
+    //Text Color Controls
+    if(down){
+      fill(255);
+    }else{
+      fill(0);
+    }
+    textSize(12);
+    text(label, xpos+wid/2-(textWidth(label)/2), ypos+hei/2+(textAscent()/2));
+    //all of this just centers the text in the box
+  }
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -267,7 +320,7 @@ ArrayList <specialTarget> targets1 = new ArrayList<specialTarget>();
 //images.add(loadIMage("asdfasdf"));
 //PImage bla = images.get(0);ad
 //image(images.get(0),  123, 234 );
-ArrayList <PImage> bullets = new ArrayList<PImage>(); 
+ArrayList <PImage> bullets = new ArrayList<PImage>();
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -277,15 +330,14 @@ void draw() {
 
   //println("level: " + level + "       Max Level:" + maxLevel);
   println(dataCounter1);
-  scalc = score/2;
 
 
   if (level > maxLevel) {
     maxLevel = level;
   }
 
-    
-  
+
+
 
   if (state == 0) {
     timeLeft=(int)(60-(((frameCount-levelFrame)%1200)/60));
@@ -346,8 +398,7 @@ void draw() {
           targets1.get(0).display();
           if (specialtargethit==false&&mousePressed&&dist(mouseX, mouseY, targets1.get(0).xTarget1, targets1.get(0).yTarget1)<60&&lives>0) {
             specialtargethit=true;
-//            score+=level*10;
-              score++;
+            score+=level*10;
             targets1.get(0).shot=true;
           }
         }
@@ -371,17 +422,12 @@ void draw() {
         state = 1;
       }
       fill(255);
-      textSize(30);
+      textSize(48);
       textAlign(RIGHT);
-//      text("score: "+score, width-10, 50);
-      
-//      if (
-      scalc = score/2;
-      image(sbar[scalc], width/2-150, 20);
-      
+      text("score: "+score, width-10, 50);
       //text("lives: "+lives, width-10, 100);
       //text("highscore: "+highscore, width-10, 30);
-      text("time: "+timeLeft, width-20, 120);
+      text("time: "+timeLeft, width-10, 100);
       textAlign(LEFT);
       image(bullet, 1170, 120);
       //text("Bullets: "+numBullets, 10, 590);
@@ -393,7 +439,7 @@ void draw() {
     }
   }
   if (state == 2) {
-    background(0); 
+    background(0);
     image(startScreen, 0, 0);
     image(bgloopStart, 0, 0);
     bgloopStart.play();
@@ -407,36 +453,10 @@ void draw() {
   }
   if (state==1) {
     background(0);
-    if (level==1) {
-        image(background2, 0, 0);
-        image(levelinfo2, (width/2-120), (height/2-100));
-      } 
-      if (level==2) {
-        image(background3, 0, 0);
-        image(levelinfo3, (width/2-120), (height/2-100));
-      } else if (level==3) {
-        image(background4, 0, 0);
-        image(levelinfo4, (width/2-120), (height/2-100));
-      } else if (level==4) {
-        image(background5, 0, 0);
-        image(levelinfo5, (width/2-120), (height/2-100));
-      } else if (level==5) {
-        image(background6, 0, 0);
-        image(levelinfo6, (width/2-120), (height/2-100));
-      } else if (level==6) {
-//        image(background6, 0, 0);
-//        image(levelinfo6, (width/2-120), (height/2+50));
-      } else {
-//        image(background7, 0, 0);
-//        image(levelinfo7, (width/2-120), (height/2+50));
-      }
-  
-
-    
     textAlign(CENTER);
-    textSize(18);
-//    text("Level " + (level+1), width/2, height/2);
-    text("Press 1 to Continue", width/2+5, height/2+100);
+    textSize(50);
+    text("Level " + (level+1), width/2, height/2);
+    text("Press 1 to Continue", width/2, height/2+50);
     lives = 5;
     if (keyPressed&&(frameCount-levelFrame)>=1300) {
       targets.clear();
@@ -445,7 +465,7 @@ void draw() {
       lives = 5;
       numBullets = 6;
       level++;
-      
+
       specialtargethit=false;
       targets1.remove(0);
       state = 0;
@@ -453,6 +473,19 @@ void draw() {
   }
   if (level == 7) {
     state = 4;
+  }
+
+  if (popup) {
+    buttonYes.update();
+    buttonNo.update();
+      if(buttonYes.clicked){
+        background(#ff0000);
+        popup = false;
+      }
+      if(buttonNo.clicked){
+        background(#0000ff);
+        popup = false;
+      }
   }
 }
 
@@ -467,7 +500,7 @@ void keyPressed() {
   }
   if (key=='r') {
     lastReload = frameCount;
-    numBullets = 5;
+    numBullets = 6;
     reload1.rewind();
     reload1.play();
   }
@@ -485,11 +518,11 @@ void keyReleased() {
   if (key=='s') {
     //javax.swing.JOptionPane.showOptionDialog(frame,"Are you sure you want to shoot?");
 
-    int userInput = JOptionPane.showOptionDialog(frame, "Are you sure you want to shoot?", "Press A to select", 
-      JOptionPane.YES_NO_CANCEL_OPTION, 
-      JOptionPane.QUESTION_MESSAGE, 
-      null, 
-      options, 
+    int userInput = JOptionPane.showOptionDialog(frame, "Are you sure you want to shoot?", "Press A to select",
+      JOptionPane.YES_NO_CANCEL_OPTION,
+      JOptionPane.QUESTION_MESSAGE,
+      null,
+      options,
       null);
     //println(userInput);
 
@@ -525,11 +558,11 @@ void keyReleased() {
           gunshot2.rewind();
           gunshot2.play();
         }
-       
-      
+
+
         for (int i=0; i<targets.size(); i++) {
           if (dist(mouseX, mouseY, targets.get(i).xTarget, targets.get(i).yTarget+50)<100&&dist(mouseX, mouseY, targets.get(i).xTarget, targets.get(i).yTarget+50)>20&&lives>0) {
-            score++;
+            score+=level;
             targets.get(i).murpx=targets.get(i).xTarget;
             targets.get(i).murpy=targets.get(i).yTarget;
             targets.get(i).shot=true;
@@ -561,7 +594,7 @@ void keyReleased() {
                 targetHit1.rewind();
                 targetHit1.play();
               }
-            
+
 
            if (targets.get(i).yTarget>1280) {
               targets.remove(i);
@@ -593,11 +626,10 @@ void keyReleased() {
                 targetHit1.rewind();
                 targetHit1.play();
               }
-                
+
             }
           } else if (dist(mouseX, mouseY, targets.get(i).xTarget, targets.get(i).yTarget+50)<20&&dist(mouseX, mouseY, targets.get(i).xTarget-50, targets.get(i).yTarget)>0&&lives>0) {
-//            score+=level*3;
-            score++;
+            score+=level*3;
             targets.get(i).murpx=targets.get(i).xTarget;
             targets.get(i).murpy=targets.get(i).yTarget;
             targets.get(i).shot=true;
@@ -641,7 +673,7 @@ void keyReleased() {
         emptygun.rewind();
         emptygun.play();
       }
-    } 
+    }
     if ((userInput == 1) && (frameCount - lastReload>=60)) {
       noCursor();
       state = 4;
@@ -661,9 +693,10 @@ void keyReleased() {
     if (key=='q'){
       state = 2;
   }
-  if (key=='m'){
-      noLoop();
+  if (key == 't'){
+    popup = true;
   }
+}
 }
 
 
@@ -690,9 +723,9 @@ void appendTextToFile(String filename, String text){
 void createFile(File f){
   File parentDir = f.getParentFile();
   try{
-    parentDir.mkdirs(); 
+    parentDir.mkdirs();
     f.createNewFile();
   }catch(Exception e){
     e.printStackTrace();
   }
-}    
+}
