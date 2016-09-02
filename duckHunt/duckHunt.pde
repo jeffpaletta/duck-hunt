@@ -1,103 +1,34 @@
 /* Duck Hunt Version 8*/
 ////////////////////////////////////////////////////////////
-
-//import processing.sound.*;
 import gifAnimation.*;
 import ddf.minim.*;
-//import ddf.minim.analysis.*;
-//import ddf.minim.effects.*;
-//import ddf.minim.signals.*;
-//import ddf.minim.spi.*;
 import ddf.minim.ugens.*;
-
 import javax.swing.JOptionPane; 
-
 import java.io.FileWriter;
 import java.io.BufferedWriter;
-
+import controlP5.*;
 
 String[] data;
-String joinedData;
-
-// $
+String joinedData, convertJoinedData;
 String outFilename = "data.txt";
+int maxLevel = 0, numUsersMore = 0, numUsersLess = 0, numUsersEqual = 0;
+int dataCounter1 = 0, dataCounter2 = 0, dataCounter3 = 0, dataCounter4 = 0, dataCounter5 = 0, dataCounter6 = 0, dataCounter7 = 0, dataCounter8 = 0;
 
 PFont font;
 
-int maxLevel = 0;
-
-int numUsersMore;
-int numUsersLess;
-int numUsersEqual;
-
-int convertJoinedData;
-
-int dataCounter1; 
-int dataCounter2; 
-int dataCounter3; 
-int dataCounter4; 
-int dataCounter5; 
-int dataCounter6; 
-int dataCounter7; 
-int dataCounter8; 
-
-PImage background1;
-PImage background2;
-PImage background3;
-PImage background4;
-PImage background5;
-PImage background6;
-PImage background7;
-
-
 Minim minim;
-
 AudioPlayer emptygun;
+AudioPlayer targetHit1, targetHit2;
+AudioPlayer gunshot1, gunshot2, gunshotburst;
+AudioPlayer reload1, reload2;
+AudioPlayer quack1, quack2, manshot1, manshot2, manshotquick, slowdying, childrenscream, targethit33;
+AudioPlayer ambient1, ambient2, ambient3, ambient4, ambient5, ambient6, ambient7;
 
-AudioPlayer targetHit1;
-AudioPlayer targetHit2;
-
-AudioPlayer gunshot1;
-AudioPlayer gunshot2;
-
-AudioPlayer reload1;
-AudioPlayer reload2;
-
-AudioPlayer gunshotburst;
-AudioPlayer manshot1;
-AudioPlayer manshot2;
-AudioPlayer manshotquick;
-AudioPlayer quack1;
-AudioPlayer quack2;
-AudioPlayer slowdying;
-AudioPlayer childrenscream;
-AudioPlayer targethit33;
-
-AudioPlayer ambient1;
-AudioPlayer ambient2;
-AudioPlayer ambient3;
-AudioPlayer ambient4;
-AudioPlayer ambient5;
-AudioPlayer ambient6;
-AudioPlayer ambient7;
-
-PImage target1;
-PImage duckHigh;
-PImage duckLow;
-
-PImage[] duckAnimation;
 Gif duckLoop;
 
-
-PImage targethit1;
-
-
-PImage crosshair;
-PImage bullet;
-PImage specialtarget1;
-PImage duckhuntingbeginningscreen;
-PImage explosion;
-
+PImage duckhuntingbeginningscreen, background1, background2, background3, background4, background5, background6, background7;
+PImage target1, targethit1, specialtarget1;
+PImage crosshair, bullet, explosion;
 
 int state=2, level = 1, numBullets = 6, lastClear = 0, lastReload = 0, levelFrame = 0, lives = 5, score, highscore, timeLeft;
 boolean dead = false;
@@ -105,25 +36,13 @@ boolean shoot = false;
 boolean specialtargethit = false;
 Object[] options = {"Yes", "No"};
 
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void setup() {
-
   size(1280, 720);
   noCursor();
-  
-  
-  
-//////////////////////////
-//    LOAD GRAPHICS     //
-//////////////////////////
 
   duckhuntingbeginningscreen = loadImage("graphics/duckhuntingbeginningscreen.jpg");  
-  
   background1 = loadImage("graphics/backgrounds/level1.jpg");
   background2 = loadImage("graphics/backgrounds/level2.jpg");
   background3 = loadImage("graphics/backgrounds/level3.jpg");
@@ -137,7 +56,7 @@ void setup() {
 //  duckHigh = loadImage("graphics/targets/duckHigh.png");
 //  duckLow = loadImage("graphics/targets/duckLow.png");
 
-  duckLoop = new Gif(this, "graphics/targets/3.gif");
+  duckLoop = new Gif(this, "graphics/targets/5.gif");
   duckLoop.loop();
 
   targethit1 = loadImage("graphics/targets/targethit1.png");
@@ -150,8 +69,6 @@ void setup() {
   explosion = loadImage("graphics/explosion.png");
 
 
-
-
 ///////////////////////
 //    LOAD AUDIO     //
 ///////////////////////
@@ -159,13 +76,10 @@ void setup() {
   minim = new Minim(this);
 
   emptygun = minim.loadFile("audio/emptygun.mp3");
-
   targetHit1 = minim.loadFile("audio/quack1.mp3");
   targetHit2 = minim.loadFile("audio/quack2.mp3");
-  
   gunshot1 = minim.loadFile("audio/gunshot1.mp3");
   gunshot2 = minim.loadFile("audio/gunshot2.mp3");  
-  
   reload1 = minim.loadFile("audio/reload1.mp3");
   reload2 = minim.loadFile("audio/reload2.mp3");
   
@@ -184,16 +98,13 @@ void setup() {
   targethit33 = minim.loadFile("audio/targethit33.mp3");
   
   
-  
-    
 ///////////////////////////
 //     DATA TRACKING     //
 ///////////////////////////
 
-  data = loadStrings("data.txt");
-  joinedData = join(data, " ");
+//  data = loadStrings("data.txt");
+//  joinedData = join(data, " ");
   //convertJoinedData = Integer.parseInt(joinedData);
-  
   dataCounter1 = 0; 
   dataCounter2 = 0; 
   dataCounter3 = 0; 
@@ -202,7 +113,6 @@ void setup() {
   dataCounter6 = 0; 
   dataCounter7 = 0; 
   dataCounter8 = 0;
-  
   numUsersMore = 0;
   numUsersLess = 0;
   numUsersEqual = 0;
@@ -218,11 +128,8 @@ void setup() {
   // else if (joinedData.charAt(i) == '8') { dataCounter8++; }
   // else {}
   //}
-  
     noCursor();
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -716,7 +623,6 @@ void appendTextToFile(String filename, String text){
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 void createFile(File f){
   File parentDir = f.getParentFile();
