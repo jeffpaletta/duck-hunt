@@ -1,3 +1,5 @@
+//import processing.video.*;
+
 /* Duck Hunt Version 8*/
 ////////////////////////////////////////////////////////////
 import gifAnimation.*;
@@ -8,6 +10,7 @@ import java.io.FileWriter;
 import java.io.BufferedWriter;
 import controlP5.*;
 
+
 String[] data;
 String joinedData, convertJoinedData;
 String outFilename = "data.txt";
@@ -15,6 +18,10 @@ int maxLevel = 0, numUsersMore = 0, numUsersLess = 0, numUsersEqual = 0;
 int dataCounter1 = 0, dataCounter2 = 0, dataCounter3 = 0, dataCounter4 = 0, dataCounter5 = 0, dataCounter6 = 0, dataCounter7 = 0, dataCounter8 = 0;
 
 PFont font;
+
+PImage[] sbar = new PImage[25];
+int scalc;
+
 
 Minim minim;
 AudioPlayer emptygun;
@@ -24,9 +31,10 @@ AudioPlayer reload1, reload2;
 AudioPlayer quack1, quack2, manshot1, manshot2, manshotquick, slowdying, childrenscream, targethit33;
 AudioPlayer ambient1, ambient2, ambient3, ambient4, ambient5, ambient6, ambient7;
 
-Gif duckLoop;
+Gif duckLoop, bgloopStart, bgloop1, bgloop2, bgloop3, bgloop4, bgloop5, bgloop6;
 
-PImage duckhuntingbeginningscreen, background1, background2, background3, background4, background5, background6, background7;
+PImage startScreen, background1, background2, background3, background4, background5, background6, background7;
+PImage levelinfo1, levelinfo2, levelinfo3, levelinfo4, levelinfo5, levelinfo6;
 PImage target1, targethit1, specialtarget1;
 PImage crosshair, bullet, explosion;
 
@@ -41,8 +49,18 @@ Object[] options = {"Yes", "No"};
 void setup() {
   size(1280, 720);
   noCursor();
-
-  duckhuntingbeginningscreen = loadImage("graphics/duckhuntingbeginningscreen.jpg");  
+  
+  font = createFont("PressStart2P.ttf", 36);
+  textFont(font);
+  
+  for (int i = 0; i < sbar.length; i++){
+    sbar[i] = loadImage("graphics/score/Score_" + i + ".png");
+  }
+  
+  crosshair = loadImage("graphics/crosshair.png");
+  bullet = loadImage("graphics/bullet.png");
+  explosion = loadImage("graphics/explosion.png");
+  startScreen = loadImage("graphics/backgrounds/start_screen.jpg");  
   background1 = loadImage("graphics/backgrounds/level1.jpg");
   background2 = loadImage("graphics/backgrounds/level2.jpg");
   background3 = loadImage("graphics/backgrounds/level3.jpg");
@@ -50,42 +68,36 @@ void setup() {
   background5 = loadImage("graphics/backgrounds/level5.jpg");  
   background6 = loadImage("graphics/backgrounds/level6.jpg");  
   background7 = loadImage("graphics/backgrounds/level7.jpg");  
-
-
-//  target1 = loadImage("graphics/targets/flappyduck.gif");
-//  duckHigh = loadImage("graphics/targets/duckHigh.png");
-//  duckLow = loadImage("graphics/targets/duckLow.png");
-
-  duckLoop = new Gif(this, "graphics/targets/5.gif");
-  duckLoop.loop();
-
   targethit1 = loadImage("graphics/targets/targethit1.png");
+  
+  levelinfo1 = loadImage("graphics/rounds/Round01.png");
+  levelinfo2 = loadImage("graphics/rounds/Round02.png");
+  levelinfo3 = loadImage("graphics/rounds/Round03.png");
+  levelinfo4 = loadImage("graphics/rounds/Round04.png");
+  levelinfo5 = loadImage("graphics/rounds/Round05.png");
+  levelinfo6 = loadImage("graphics/rounds/Round06.png");
+
+  duckLoop = new Gif(this, "graphics/targets/duck.gif");  duckLoop.loop();
+  bgloopStart = new Gif(this, "graphics/targets/bgloopStart.gif");  bgloopStart.loop();
+//  bgloop1 = new Gif(this, "graphics/targets/bgloop1.gif");  bgloop1.loop();
+//  bgloop2 = new Gif(this, "graphics/targets/bgloop2.gif");  bgloop2.loop();
+////  bgloop3 = new Gif(this, "graphics/targets/bgloop3.gif");  bgloop3.loop();
+//  bgloop4 = new Gif(this, "graphics/targets/bgloop4.gif");  bgloop4.loop();
+//  bgloop5 = new Gif(this, "graphics/targets/bgloop5.gif");  bgloop5.loop();
+//  bgloop6 = new Gif(this, "graphics/targets/bgloop6.gif");  bgloop6.loop();
 
   specialtarget1 = target1;
   target1 = duckLoop;
 
-  crosshair = loadImage("graphics/crosshair.png");
-  bullet = loadImage("graphics/bullet.png");
-  explosion = loadImage("graphics/explosion.png");
-
-
-///////////////////////
-//    LOAD AUDIO     //
-///////////////////////
 
   minim = new Minim(this);
-
   emptygun = minim.loadFile("audio/emptygun.mp3");
   targetHit1 = minim.loadFile("audio/quack1.mp3");
   targetHit2 = minim.loadFile("audio/quack2.mp3");
   gunshot1 = minim.loadFile("audio/gunshot1.mp3");
   gunshot2 = minim.loadFile("audio/gunshot2.mp3");  
   reload1 = minim.loadFile("audio/reload1.mp3");
-  reload2 = minim.loadFile("audio/reload2.mp3");
-  
-  
-  //ambient1 = minim.loadFile("audio/reload2.mp3");
-  
+  reload2 = minim.loadFile("audio/reload2.mp3");  
   
   childrenscream = minim.loadFile("audio/childrenscream.mp3");
   gunshotburst = minim.loadFile("audio/gunshotburst.mp3");
@@ -97,6 +109,14 @@ void setup() {
   quack2 = minim.loadFile("audio/quack2.mp3");
   targethit33 = minim.loadFile("audio/targethit33.mp3");
   
+//  ambient1 = minim.loadFile("audio/ambient/ambient1.mp3");
+//  ambient2 = minim.loadFile("audio/ambient/ambient2.mp3");
+//  ambient3 = minim.loadFile("audio/ambient/ambient3.mp3");
+//  ambient4 = minim.loadFile("audio/ambient/ambient4.mp3");
+//  ambient5 = minim.loadFile("audio/ambient/ambient5.mp3");
+//  ambient6 = minim.loadFile("audio/ambient/ambient6.mp3");
+//  ambient1 = minim.loadFile("audio/ambient/ambient1.mp3");
+
   
 ///////////////////////////
 //     DATA TRACKING     //
@@ -257,11 +277,15 @@ void draw() {
 
   //println("level: " + level + "       Max Level:" + maxLevel);
   println(dataCounter1);
+  scalc = score/2;
 
 
   if (level > maxLevel) {
     maxLevel = level;
   }
+
+    
+  
 
   if (state == 0) {
     timeLeft=(int)(60-(((frameCount-levelFrame)%1200)/60));
@@ -322,7 +346,8 @@ void draw() {
           targets1.get(0).display();
           if (specialtargethit==false&&mousePressed&&dist(mouseX, mouseY, targets1.get(0).xTarget1, targets1.get(0).yTarget1)<60&&lives>0) {
             specialtargethit=true;
-            score+=level*10;
+//            score+=level*10;
+              score++;
             targets1.get(0).shot=true;
           }
         }
@@ -346,12 +371,17 @@ void draw() {
         state = 1;
       }
       fill(255);
-      textSize(48);
+      textSize(30);
       textAlign(RIGHT);
-      text("score: "+score, width-10, 50);
+//      text("score: "+score, width-10, 50);
+      
+//      if (
+      scalc = score/2;
+      image(sbar[scalc], width/2-150, 20);
+      
       //text("lives: "+lives, width-10, 100);
       //text("highscore: "+highscore, width-10, 30);
-      text("time: "+timeLeft, width-10, 100);
+      text("time: "+timeLeft, width-20, 120);
       textAlign(LEFT);
       image(bullet, 1170, 120);
       //text("Bullets: "+numBullets, 10, 590);
@@ -364,9 +394,12 @@ void draw() {
   }
   if (state == 2) {
     background(0); 
-    //image(duckhuntingbeginningscreen, width/2-210, 50); 
-    textAlign(CENTER);
-    text("press 1 to begin", width/2, height/2+150);
+    image(startScreen, 0, 0);
+    image(bgloopStart, 0, 0);
+    bgloopStart.play();
+    duckLoop.pause();
+//    textAlign(CENTER);
+//    text("press 1 to begin", width/2, height/2+150);
     if (keyPressed) {
       frameCount = 0;
       state = 0;
@@ -374,10 +407,36 @@ void draw() {
   }
   if (state==1) {
     background(0);
+    if (level==1) {
+        image(background2, 0, 0);
+        image(levelinfo2, (width/2-120), (height/2-100));
+      } 
+      if (level==2) {
+        image(background3, 0, 0);
+        image(levelinfo3, (width/2-120), (height/2-100));
+      } else if (level==3) {
+        image(background4, 0, 0);
+        image(levelinfo4, (width/2-120), (height/2-100));
+      } else if (level==4) {
+        image(background5, 0, 0);
+        image(levelinfo5, (width/2-120), (height/2-100));
+      } else if (level==5) {
+        image(background6, 0, 0);
+        image(levelinfo6, (width/2-120), (height/2-100));
+      } else if (level==6) {
+//        image(background6, 0, 0);
+//        image(levelinfo6, (width/2-120), (height/2+50));
+      } else {
+//        image(background7, 0, 0);
+//        image(levelinfo7, (width/2-120), (height/2+50));
+      }
+  
+
+    
     textAlign(CENTER);
-    textSize(50);
-    text("Level " + (level+1), width/2, height/2);
-    text("Press 1 to Continue", width/2, height/2+50);
+    textSize(18);
+//    text("Level " + (level+1), width/2, height/2);
+    text("Press 1 to Continue", width/2+5, height/2+100);
     lives = 5;
     if (keyPressed&&(frameCount-levelFrame)>=1300) {
       targets.clear();
@@ -408,7 +467,7 @@ void keyPressed() {
   }
   if (key=='r') {
     lastReload = frameCount;
-    numBullets = 6;
+    numBullets = 5;
     reload1.rewind();
     reload1.play();
   }
@@ -470,7 +529,7 @@ void keyReleased() {
       
         for (int i=0; i<targets.size(); i++) {
           if (dist(mouseX, mouseY, targets.get(i).xTarget, targets.get(i).yTarget+50)<100&&dist(mouseX, mouseY, targets.get(i).xTarget, targets.get(i).yTarget+50)>20&&lives>0) {
-            score+=level;
+            score++;
             targets.get(i).murpx=targets.get(i).xTarget;
             targets.get(i).murpy=targets.get(i).yTarget;
             targets.get(i).shot=true;
@@ -537,7 +596,8 @@ void keyReleased() {
                 
             }
           } else if (dist(mouseX, mouseY, targets.get(i).xTarget, targets.get(i).yTarget+50)<20&&dist(mouseX, mouseY, targets.get(i).xTarget-50, targets.get(i).yTarget)>0&&lives>0) {
-            score+=level*3;
+//            score+=level*3;
+            score++;
             targets.get(i).murpx=targets.get(i).xTarget;
             targets.get(i).murpy=targets.get(i).yTarget;
             targets.get(i).shot=true;
@@ -600,6 +660,9 @@ void keyReleased() {
     }
     if (key=='q'){
       state = 2;
+  }
+  if (key=='m'){
+      noLoop();
   }
 }
 
