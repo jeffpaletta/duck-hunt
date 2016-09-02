@@ -163,30 +163,18 @@ void setup() {
   numUsersLess = 0;
   numUsersEqual = 0;
   
-  //for (int i = 0; i < joinedData.length(); i++) {
-  //  if (joinedData.charAt(i) == '1') { dataCounter1++; }
-  //  else if (joinedData.charAt(i) == '2') { dataCounter2++; }
-  //  else if (joinedData.charAt(i) == '3') { dataCounter3++; }
-  //  else if (joinedData.charAt(i) == '4') { dataCounter4++; }
-  //  else if (joinedData.charAt(i) == '5') { dataCounter5++; }
-  //  else if (joinedData.charAt(i) == '6') { dataCounter6++; }
-  //  else if (joinedData.charAt(i) == '7') { dataCounter7++; }
-  //  else if (joinedData.charAt(i) == '8') { dataCounter8++; }
-  //  else {}
-  //}
-  
-    for (int i = 0; i < convertJoinedData.length(); i++) {
-    if (convertJoinedData.charAt(i) == maxLevel) { numUsersEqual++; }
-    else if (convertJoinedData.charAt(i) > maxLevel) { numUsersMore++; }
-    else if (convertJoinedData.charAt(i) < maxLevel) { numUsersLess++; }
-    //else if (joinedData.charAt(i) == '3') { dataCounter3++; }
-    //else if (joinedData.charAt(i) == '4') { dataCounter4++; }
-    //else if (joinedData.charAt(i) == '5') { dataCounter5++; }
-    //else if (joinedData.charAt(i) == '6') { dataCounter6++; }
-    //else if (joinedData.charAt(i) == '7') { dataCounter7++; }
-    //else if (joinedData.charAt(i) == '8') { dataCounter8++; }
-    else {}
+  for (int i = 0; i < joinedData.length(); i++) {
+   if (joinedData.charAt(i) == '1') { dataCounter1++; }
+   else if (joinedData.charAt(i) == '2') { dataCounter2++; }
+   else if (joinedData.charAt(i) == '3') { dataCounter3++; }
+   else if (joinedData.charAt(i) == '4') { dataCounter4++; }
+   else if (joinedData.charAt(i) == '5') { dataCounter5++; }
+   else if (joinedData.charAt(i) == '6') { dataCounter6++; }
+   else if (joinedData.charAt(i) == '7') { dataCounter7++; }
+   else if (joinedData.charAt(i) == '8') { dataCounter8++; }
+   else {}
   }
+  
     noCursor();
 
 }
@@ -406,18 +394,18 @@ void draw() {
         state = 1;
       }
       fill(255);
-      textSize(24);
+      textSize(48);
       textAlign(RIGHT);
       text("score: "+score, width-10, 50);
-      text("lives: "+lives, width-10, 70);
+      text("lives: "+lives, width-10, 100);
       //text("highscore: "+highscore, width-10, 30);
-      text("Time Left: "+timeLeft, width-10, 90);
+      text("time: "+timeLeft, width-10, 150);
       textAlign(LEFT);
-      image(bullet, 0, 540);
+      image(bullet, 1820, 170);
       //text("Bullets: "+numBullets, 10, 590);
       for (int j = 0; j < numBullets; j++) {
         if (state==0) {
-          image(bullet, j*10+10, 540);
+          image(bullet, j*10+1830, 170);
         }
       }
     }
@@ -426,7 +414,7 @@ void draw() {
     background(0); 
     image(duckhuntingbeginningscreen, width/2-210, 50); 
     textAlign(CENTER);
-    text("Intro page \n press enter to begin", width/2, height/2+150);
+    text("Intro page \n press A to begin", width/2, height/2+150);
     if (keyPressed) {
       frameCount = 0;
       state = 0;
@@ -436,8 +424,8 @@ void draw() {
     background(0);
     textAlign(CENTER);
     textSize(50);
-    text("Stage " + (level+1), width/2, height/2);
-    text("Press Enter to Continue", width/2, height/2+50);
+    text("Level " + (level+1), width/2, height/2);
+    text("Press A to Continue", width/2, height/2+50);
     lives = 5;
     if (keyPressed&&(frameCount-levelFrame)>=1300) {
       targets.clear();
