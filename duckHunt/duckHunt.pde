@@ -15,7 +15,7 @@ boolean goldDuckShot = false;
 
 void setup() {
   size(700, 600);  
-  backgroundImg = loadImage("background.jpg");
+  backgroundImg = loadImage("background2.jpg");
   duck = loadImage("duck.png");
   shotgun = loadImage("shotgun.png");
   bullet = loadImage("bullet.png");
