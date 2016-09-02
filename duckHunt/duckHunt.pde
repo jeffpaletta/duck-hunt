@@ -41,7 +41,6 @@ int dataCounter6;
 int dataCounter7; 
 int dataCounter8; 
 
-PImage background0;
 PImage background1;
 PImage background2;
 PImage background3;
@@ -50,38 +49,46 @@ PImage background5;
 PImage background6;
 PImage background7;
 
-//SoundFile gunshot;
-//SoundFile targetHit1;
 
 Minim minim;
-Delay delay;
-AudioPlayer gunshot;
+
+AudioPlayer emptygun;
+
 AudioPlayer targetHit1;
-AudioPlayer gunReload;
+AudioPlayer targetHit2;
+
+AudioPlayer gunshot1;
+AudioPlayer gunshot2;
+
+AudioPlayer reload1;
+AudioPlayer reload2;
+
+AudioPlayer gunshotburst;
+AudioPlayer manshot1;
+AudioPlayer manshot2;
+AudioPlayer manshotquick;
+AudioPlayer quack1;
+AudioPlayer quack2;
+AudioPlayer slowdying;
+AudioPlayer childrenscream;
+AudioPlayer targethit33;
+
+
 
 PImage target1;
-PImage target2;
-PImage target3;
-PImage target4;
-PImage target5;
-PImage target6;
-PImage target7;
+
 
 PImage targethit1;
-PImage targethit2;
-PImage targethit3;
-PImage targethit4;
-PImage targethit5;
-PImage targethit6;
-PImage targethit7;
 
 
-PImage shotgun;
+PImage crosshair;
 PImage bullet;
 PImage specialtarget1;
 PImage duckhuntingbeginningscreen;
 PImage explosion;
-int state=2, level = 1, numBullets = 5, lastClear = 0, lastReload = 0, levelFrame = 0, lives = 5, score, highscore, timeLeft;
+
+
+int state=2, level = 1, numBullets = 6, lastClear = 0, lastReload = 0, levelFrame = 0, lives = 5, score, highscore, timeLeft;
 boolean dead = false;
 boolean shoot = false;
 boolean specialtargethit = false;
@@ -95,57 +102,74 @@ Object[] options = {"Yes", "No"};
 
 void setup() {
 
-  size(1920, 1080);
+  size(1280, 720);
   noCursor();
   
   
-  background0 = loadImage("welcome.jpg");
-  background1 = loadImage("bg1.jpg");
-  background2 = loadImage("bg2.jpg");
-  background3 = loadImage("bg3.jpg");
-  background4 = loadImage("bg4.jpg");
-  background5 = loadImage("bg5.jpg");  
-  background6 = loadImage("bg6.jpg");  
-  background7 = loadImage("bg7.jpg");  
+  
+//////////////////////////
+//    LOAD GRAPHICS     //
+//////////////////////////
+
+  duckhuntingbeginningscreen = loadImage("graphics/duckhuntingbeginningscreen.jpg");  
+  
+  background1 = loadImage("graphics/backgrounds/level1.jpg");
+  background2 = loadImage("graphics/backgrounds/level2.jpg");
+  background3 = loadImage("graphics/backgrounds/level3.jpg");
+  background4 = loadImage("graphics/backgrounds/level4.jpg");
+  background5 = loadImage("graphics/backgrounds/level5.jpg");  
+  background6 = loadImage("graphics/backgrounds/level6.jpg");  
+  background7 = loadImage("graphics/backgrounds/level7.jpg");  
 
 
-  target1 = loadImage("target1.png");
-  target2 = loadImage("target2.png");
-  target3 = loadImage("target3.png");
-  target4 = loadImage("target4.png");
-  target5 = loadImage("target5.png");
-  target6 = loadImage("target6.png");
-  target7 = loadImage("target7.png");
+  target1 = loadImage("graphics/targets/target1.png");
 
-  targethit1 = loadImage("targethit1.png");
-  targethit2 = loadImage("targethit2.png");
-  targethit3 = loadImage("targethit3.png");
-  targethit4 = loadImage("targethit4.png");
-  targethit5 = loadImage("targethit5.png");
-  targethit6 = loadImage("targethit6.png");
-  targethit7 = loadImage("targethit7.png");
 
-  //specialtarget1 = loadImage("student.png");
+  targethit1 = loadImage("graphics/targets/targethit1.png");
+
   specialtarget1 = target1;
 
-  shotgun = loadImage("crosshair.png");
-  bullet = loadImage("bullet.png");
-  duckhuntingbeginningscreen = loadImage("duckhuntingbeginningscreen.jpg");
-  explosion = loadImage("explosion.png");
+  crosshair = loadImage("graphics/crosshair.png");
+  bullet = loadImage("graphics/bullet.png");
+  explosion = loadImage("graphics/explosion.png");
 
-  //gunshot = new SoundFile(this, "gunshot.mp3");
-  //targetHit1 = new SoundFile(this, "targetHit1.mp3");
+
+
+
+///////////////////////
+//    LOAD AUDIO     //
+///////////////////////
 
   minim = new Minim(this);
-  delay = new Delay(1, 1);
 
-  gunshot = minim.loadFile("gunshot.mp3");
-  targetHit1 = minim.loadFile("targetHit1.mp3");
-  gunReload = minim.loadFile("reload.wav");
+  emptygun = minim.loadFile("audio/emptygun.mp3");
 
+  targetHit1 = minim.loadFile("audio/quack1.mp3");
+  targetHit2 = minim.loadFile("audio/quack2.mp3");
+  
+  gunshot1 = minim.loadFile("audio/gunshot1.mp3");
+  gunshot2 = minim.loadFile("audio/gunshot2.mp3");  
+  
+  reload1 = minim.loadFile("audio/reload1.mp3");
+  reload2 = minim.loadFile("audio/reload2.mp3");
+  
+  childrenscream = minim.loadFile("audio/childrenscream.mp3");
+  gunshotburst = minim.loadFile("audio/gunshotburst.mp3");
+  manshot1 = minim.loadFile("audio/manshot1.mp3");
+  manshot2 = minim.loadFile("audio/manshot2.mp3");
+  manshotquick = minim.loadFile("audio/manshotquick.mp3");
+  slowdying = minim.loadFile("audio/slowdying.mp3");
+  quack1 = minim.loadFile("audio/quack1.mp3");
+  quack2 = minim.loadFile("audio/quack2.mp3");
+  targethit33 = minim.loadFile("audio/targethit33.mp3");
+  
+  
   
     
-  
+///////////////////////////
+//     DATA TRACKING     //
+///////////////////////////
+
   data = loadStrings("data.txt");
   joinedData = join(data, " ");
   //convertJoinedData = Integer.parseInt(joinedData);
@@ -180,7 +204,7 @@ void setup() {
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 class Target {
@@ -199,6 +223,9 @@ class Target {
   }
   
   
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  
   void display() {
 
     if (flip) { 
@@ -206,7 +233,17 @@ class Target {
       if (shot)image(targethit1, xTarget, yTarget);
       else { 
         scale(-1.0, 1.0);
-        image(target1, -xTarget, yTarget);
+        
+      if (level==1) { image(target1, -xTarget, yTarget); }
+        else if (level==1) { image(target1, -xTarget, yTarget); }
+        else if (level==2) { image(target1, -xTarget, yTarget); }
+        else if (level==3) { image(target1, -xTarget, yTarget); }
+        else if (level==4) { image(target1, -xTarget, yTarget); }
+        else if (level==5) { image(target1, -xTarget, yTarget); }
+        else if (level==6) { image(target1, -xTarget, yTarget); }
+        else if (level==7) { image(target1, -xTarget, yTarget); }
+        else {  }
+          
         scale(-1.0, 1.0);
       }
       popMatrix();
@@ -229,6 +266,9 @@ class Target {
 }
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 class specialTarget {
   boolean flip = false;
   boolean shot = false;
@@ -239,6 +279,9 @@ class specialTarget {
     vx=level*2;
     yTarget1 = y;
   }
+  
+  
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
   
   void display() {
@@ -261,6 +304,8 @@ class specialTarget {
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 ArrayList <Target> targets = new ArrayList<Target>();
 ArrayList <specialTarget> targets1 = new ArrayList<specialTarget>();
@@ -272,23 +317,15 @@ ArrayList <specialTarget> targets1 = new ArrayList<specialTarget>();
 ArrayList <PImage> bullets = new ArrayList<PImage>(); 
 
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 void draw() {
 
   //println("level: " + level + "       Max Level:" + maxLevel);
-  
-  
-  
   println(dataCounter1);
-  
-  
-  
-  
-  
-  
+
+
   if (level > maxLevel) {
     maxLevel = level;
   }
@@ -320,7 +357,7 @@ void draw() {
         int derpy = (int)random(0, 500);
         boolean derpsplit;
         if (random(0, 2)>1) {
-          derpx=1920;
+          derpx=1280;
           derpsplit = true;
         } else {
           derpx=0;
@@ -332,40 +369,22 @@ void draw() {
         image(background1, 0, 0);
       } else if (level==2) {
         image(background2, 0, 0);
-        targethit1 = targethit2;
-        target1 = target2;
-        specialtarget1 = target2;
       } else if (level==3) {
         image(background3, 0, 0);
-        target1 = target3;
-        targethit1 = targethit3;
-        specialtarget1 = target3;
       } else if (level==4) {
         image(background4, 0, 0);
-        target1 = target4;
-        targethit1 = targethit4;
-        specialtarget1 = target4;
       } else if (level==5) {
         image(background5, 0, 0);
-        target1 = target5;
-        targethit1 = targethit5;
-        specialtarget1 = target5;
       } else if (level==6) {
         image(background6, 0, 0);
-        target1 = target6;
-        targethit1 = targethit6;
-        specialtarget1 = target6;
       } else {
         image(background7, 0, 0);
-        target1 = target7;
-        targethit1 = targethit7;
-        specialtarget1 = target7;
       }
 
-      if ((frameCount-levelFrame)%1200==1080) {
+      if ((frameCount-levelFrame)%1200==720) {
         targets1.add(new specialTarget(0, (int)random(50, height-50)));
       }
-      if ((frameCount-levelFrame)%1200>1080) {
+      if ((frameCount-levelFrame)%1200>720) {
         if (targets1.size()>0) {
           targets1.get(0).display();
           if (specialtargethit==false&&mousePressed&&dist(mouseX, mouseY, targets1.get(0).xTarget1, targets1.get(0).yTarget1)<60&&lives>0) {
@@ -381,7 +400,7 @@ void draw() {
           fill(0);
           text("Bullseye!", targets.get(i).xTarget, targets.get(i).yTarget);
         }
-        if (1920<targets.get(i).xTarget||targets.get(i).xTarget<0) {
+        if (1280<targets.get(i).xTarget||targets.get(i).xTarget<0) {
           //lives--;
           targets.remove(i);
         }
@@ -389,7 +408,7 @@ void draw() {
       if (score>=highscore) {
         highscore=score;
       }
-      image(shotgun, mouseX-348, mouseY-205);
+      image(crosshair, mouseX-348, mouseY-205);
       if ((frameCount - levelFrame)%1200==0) {
         state = 1;
       }
@@ -397,24 +416,24 @@ void draw() {
       textSize(48);
       textAlign(RIGHT);
       text("score: "+score, width-10, 50);
-      text("lives: "+lives, width-10, 100);
+      //text("lives: "+lives, width-10, 100);
       //text("highscore: "+highscore, width-10, 30);
-      text("time: "+timeLeft, width-10, 150);
+      text("time: "+timeLeft, width-10, 100);
       textAlign(LEFT);
-      image(bullet, 1820, 170);
+      image(bullet, 1170, 120);
       //text("Bullets: "+numBullets, 10, 590);
       for (int j = 0; j < numBullets; j++) {
         if (state==0) {
-          image(bullet, j*10+1830, 170);
+          image(bullet, j*10+1180, 120);
         }
       }
     }
   }
   if (state == 2) {
     background(0); 
-    image(duckhuntingbeginningscreen, width/2-210, 50); 
+    //image(duckhuntingbeginningscreen, width/2-210, 50); 
     textAlign(CENTER);
-    text("Intro page \n press A to begin", width/2, height/2+150);
+    text("press A to begin", width/2, height/2+150);
     if (keyPressed) {
       frameCount = 0;
       state = 0;
@@ -432,7 +451,7 @@ void draw() {
       levelFrame = frameCount;
       //frameCount=0;
       lives = 5;
-      numBullets = 5;
+      numBullets = 6;
       level++;
       specialtargethit=false;
       targets1.remove(0);
@@ -442,8 +461,7 @@ void draw() {
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 void keyPressed() {
@@ -453,9 +471,9 @@ void keyPressed() {
   }
   if (key=='r') {
     lastReload = frameCount;
-    numBullets = 5;
-    gunReload.rewind();
-    gunReload.play();
+    numBullets = 6;
+    reload1.rewind();
+    reload1.play();
   }
 
 
@@ -464,9 +482,7 @@ void keyPressed() {
 }
 
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 void keyReleased() {
@@ -485,22 +501,103 @@ void keyReleased() {
       noCursor();
       if (numBullets > 0) {
         numBullets--;
-        gunshot.rewind();
-        gunshot.play();
+        if(level==1) {
+          gunshot1.rewind();
+          gunshot1.play();
+        }
+        else if (level==2) {
+          gunshot2.rewind();
+          gunshot2.play();
+        }
+        else if (level==3) {
+          gunshotburst.rewind();
+          gunshotburst.play();
+        }
+        else if (level==4) {
+          gunshot2.rewind();
+          gunshot2.play();
+        }
+        else if (level==5) {
+          gunshot2.rewind();
+          gunshot2.play();
+        }
+        else if (level==6) {
+          gunshotburst.rewind();
+          gunshotburst.play();
+        }
+        else {
+          gunshot2.rewind();
+          gunshot2.play();
+        }
+       
+      
         for (int i=0; i<targets.size(); i++) {
           if (dist(mouseX, mouseY, targets.get(i).xTarget, targets.get(i).yTarget+50)<100&&dist(mouseX, mouseY, targets.get(i).xTarget, targets.get(i).yTarget+50)>20&&lives>0) {
             score+=level;
             targets.get(i).murpx=targets.get(i).xTarget;
             targets.get(i).murpy=targets.get(i).yTarget;
             targets.get(i).shot=true;
-            targetHit1.rewind();
-            targetHit1.play();
+              if(level==1) {
+                targetHit1.rewind();
+                targetHit1.play();
+              }
+              else if (level==2) {
+                targetHit2.rewind();
+                targetHit2.play();
+              }
+              else if (level==3) {
+                manshotquick.rewind();
+                manshotquick.play();
+              }
+              else if (level==4) {
+                slowdying.rewind();
+                slowdying.play();
+              }
+              else if (level==5) {
+                manshot2.rewind();
+                manshot2.play();
+              }
+              else if (level==6) {
+                childrenscream.rewind();
+                childrenscream.play();
+              }
+              else {
+                targetHit1.rewind();
+                targetHit1.play();
+              }
+            
 
-
-            if (targets.get(i).yTarget>1920) {
+           if (targets.get(i).yTarget>1280) {
               targets.remove(i);
-              targetHit1.rewind();
-              targetHit1.play();
+                if(level==1) {
+                targetHit1.rewind();
+                targetHit1.play();
+              }
+              else if (level==2) {
+                targetHit2.rewind();
+                targetHit2.play();
+              }
+              else if (level==3) {
+                manshotquick.rewind();
+                manshotquick.play();
+              }
+              else if (level==4) {
+                slowdying.rewind();
+                slowdying.play();
+              }
+              else if (level==5) {
+                manshot2.rewind();
+                manshot2.play();
+              }
+              else if (level==6) {
+                childrenscream.rewind();
+                childrenscream.play();
+              }
+              else {
+                targetHit1.rewind();
+                targetHit1.play();
+              }
+                
             }
           } else if (dist(mouseX, mouseY, targets.get(i).xTarget, targets.get(i).yTarget+50)<20&&dist(mouseX, mouseY, targets.get(i).xTarget-50, targets.get(i).yTarget)>0&&lives>0) {
             score+=level*3;
@@ -509,15 +606,46 @@ void keyReleased() {
             targets.get(i).shot=true;
             targets.get(i).bull=true;
 
-            if (targets.get(i).yTarget>1920) {
+            if (targets.get(i).yTarget>1280) {
               targets.remove(i);
-              targetHit1.rewind();
-              targetHit1.play();
+                if(level==1) {
+                targetHit1.rewind();
+                targetHit1.play();
+              }
+              else if (level==2) {
+                targetHit2.rewind();
+                targetHit2.play();
+              }
+              else if (level==3) {
+                manshotquick.rewind();
+                manshotquick.play();
+              }
+              else if (level==4) {
+                slowdying.rewind();
+                slowdying.play();
+              }
+              else if (level==5) {
+                manshot2.rewind();
+                manshot2.play();
+              }
+              else if (level==6) {
+                childrenscream.rewind();
+                childrenscream.play();
+              }
+              else {
+                targetHit1.rewind();
+                targetHit1.play();
+              }
             }
           }
         }
       }
-    } else {
+      else {
+        emptygun.rewind();
+        emptygun.play();
+      }
+    } 
+    if ((userInput == 1) && (frameCount - lastReload>=60)) {
       noCursor();
       state = 4;
       background(0);
@@ -531,6 +659,7 @@ void keyReleased() {
       appendTextToFile(outFilename, str(maxLevel));
 
       }
+      //else{}
     }
     if (key=='q'){
       state = 2;
@@ -556,7 +685,9 @@ void appendTextToFile(String filename, String text){
   }
 }
 
-// Creates a new file including all subfolders
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 void createFile(File f){
   File parentDir = f.getParentFile();
   try{
