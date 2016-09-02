@@ -4,8 +4,12 @@ import javax.swing.JOptionPane;
 /* Duck Hunt Version 2*/
 
 
-PImage backgroundImg;
-PImage backgroundImg2;
+PImage location-1;
+PImage location-2;
+PImage location-3;
+PImage location-4;
+PImage location-5;
+
 SoundFile bang;
 SoundFile ouch;
 
@@ -28,8 +32,8 @@ void setup() {
   //fullScreen();
   
 
-  backgroundImg = loadImage("bg_big.jpg");
-  backgroundImg2 = loadImage("background2.jpg");
+  location-1 = loadImage("bg_big.jpg");
+  location-2 = loadImage("background2.jpg");
   duck = loadImage("duck.png");
   shotgun = loadImage("shotgun.png");
   bullet = loadImage("bullet.png");
@@ -163,11 +167,11 @@ void draw() {
         ducks.add(new Duck(derpx, derpy, derpsplit));
       }
       if (stage==1){
-        image(backgroundImg, 0, 0);
+        image(location-1, 0, 0);
       } else if (stage==2){
-        image(backgroundImg2, 0, 0);
+        image(location-2, 0, 0);
       } else {
-        image(backgroundImg2, 0, 0);
+        image(location-2, 0, 0);
       }
       if ((frameCount-stageFrame)%1200==1080) {
         ducks1.add(new Goduck(0, (int)random(50, height-50)));
@@ -258,9 +262,9 @@ void keyPressed() {
     numBullets = 5;
   }
 }
-void mousePressed() {
+void keyReleased() {
   //javax.swing.JOptionPane.showOptionDialog(frame,"Are you sure you want to shoot?");
-    
+    if (key=='s'){
     int userInput = JOptionPane.showOptionDialog(frame, "Are you sure you want to shoot?", " ",
     JOptionPane.YES_NO_CANCEL_OPTION,
     JOptionPane.QUESTION_MESSAGE,
@@ -303,5 +307,6 @@ void mousePressed() {
       }
     }
   }
+    }
   
 }
