@@ -20,11 +20,17 @@ String[] data;
 String joinedData;
 
 // $
-String outFilename = "collectedUserData.txt";
+String outFilename = "data.txt";
 
 PFont font;
 
 int maxLevel = 0;
+
+int numUsersMore;
+int numUsersLess;
+int numUsersEqual;
+
+int convertJoinedData;
 
 int dataCounter1; 
 int dataCounter2; 
@@ -142,6 +148,7 @@ void setup() {
   
   data = loadStrings("data.txt");
   joinedData = join(data, " ");
+  //convertJoinedData = Integer.parseInt(joinedData);
   
   dataCounter1 = 0; 
   dataCounter2 = 0; 
@@ -152,18 +159,34 @@ void setup() {
   dataCounter7 = 0; 
   dataCounter8 = 0;
   
-  for (int i = 0; i < joinedData.length(); i++) {
-    if (joinedData.charAt(i) == '1') { dataCounter1++; }
-    else if (joinedData.charAt(i) == '2') { dataCounter2++; }
-    else if (joinedData.charAt(i) == '3') { dataCounter3++; }
-    else if (joinedData.charAt(i) == '4') { dataCounter4++; }
-    else if (joinedData.charAt(i) == '5') { dataCounter5++; }
-    else if (joinedData.charAt(i) == '6') { dataCounter6++; }
-    else if (joinedData.charAt(i) == '7') { dataCounter7++; }
-    else if (joinedData.charAt(i) == '8') { dataCounter8++; }
+  numUsersMore = 0;
+  numUsersLess = 0;
+  numUsersEqual = 0;
+  
+  //for (int i = 0; i < joinedData.length(); i++) {
+  //  if (joinedData.charAt(i) == '1') { dataCounter1++; }
+  //  else if (joinedData.charAt(i) == '2') { dataCounter2++; }
+  //  else if (joinedData.charAt(i) == '3') { dataCounter3++; }
+  //  else if (joinedData.charAt(i) == '4') { dataCounter4++; }
+  //  else if (joinedData.charAt(i) == '5') { dataCounter5++; }
+  //  else if (joinedData.charAt(i) == '6') { dataCounter6++; }
+  //  else if (joinedData.charAt(i) == '7') { dataCounter7++; }
+  //  else if (joinedData.charAt(i) == '8') { dataCounter8++; }
+  //  else {}
+  //}
+  
+    for (int i = 0; i < convertJoinedData.length(); i++) {
+    if (convertJoinedData.charAt(i) == maxLevel) { numUsersEqual++; }
+    else if (convertJoinedData.charAt(i) > maxLevel) { numUsersMore++; }
+    else if (convertJoinedData.charAt(i) < maxLevel) { numUsersLess++; }
+    //else if (joinedData.charAt(i) == '3') { dataCounter3++; }
+    //else if (joinedData.charAt(i) == '4') { dataCounter4++; }
+    //else if (joinedData.charAt(i) == '5') { dataCounter5++; }
+    //else if (joinedData.charAt(i) == '6') { dataCounter6++; }
+    //else if (joinedData.charAt(i) == '7') { dataCounter7++; }
+    //else if (joinedData.charAt(i) == '8') { dataCounter8++; }
     else {}
   }
-  
     noCursor();
 
 }
@@ -513,7 +536,7 @@ void keyReleased() {
       textSize(50);
       text(("you scored " + score + " points"), (width/2 - 100), height/2);
       textSize(30);
-      text(("but " + "83" + "% of players put the "), (width/2 - 100), (height/2 + 80));
+      text(("but " + numUsersLess + "% of players put the "), (width/2 - 100), (height/2 + 80));
       text(("gun down before you did"), (width/2 - 100), (height/2 + 110));
       textSize(18);
       text("press A to exit",(width/2 - 100), (height/2 + 310));
