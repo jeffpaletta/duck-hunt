@@ -1,8 +1,6 @@
 //import processing.video.*;
-
-
 /* Duck Hunt Version 8*/
-////////////////////////////////////////////////////////////
+
 import gifAnimation.*;
 import ddf.minim.*;
 import ddf.minim.ugens.*;
@@ -10,7 +8,6 @@ import javax.swing.JOptionPane;
 //import java.io.FileWriter;
 //import java.io.BufferedWriter;
 import controlP5.*;
-
 
 String[] data;
 String joinedData, convertJoinedData;
@@ -24,7 +21,6 @@ int kids = 5;
 
 PImage[] sbar = new PImage[25];
 int scalc;
-
 
 Minim minim;
 AudioPlayer emptygun;
@@ -47,8 +43,6 @@ boolean dead = false;
 boolean shoot = false;
 boolean specialtargethit = false;
 Object[] options = {"Yes", "No"};
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void setup() {
   size(1280, 720);
@@ -126,8 +120,7 @@ void setup() {
 //  ambient5 = minim.loadFile("audio/ambient/ambient5.mp3");
 //  ambient6 = minim.loadFile("audio/ambient/ambient6.mp3");
 //  ambient1 = minim.loadFile("audio/ambient/ambient1.mp3");
-
-  
+ 
 ///////////////////////////
 //     DATA TRACKING     //
 ///////////////////////////
@@ -146,7 +139,6 @@ void setup() {
   numUsersMore = 0;
   numUsersLess = 0;
   numUsersEqual = 0;
-  
   //for (int i = 0; i < joinedData.length(); i++) {
   // if (joinedData.charAt(i) == '1') { dataCounter1++; }
   // else if (joinedData.charAt(i) == '2') { dataCounter2++; }
@@ -160,10 +152,6 @@ void setup() {
   //}
     noCursor();
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 class Target {
   boolean flip = false;
   boolean bull = false;
@@ -179,10 +167,6 @@ class Target {
     yTarget = y;
   }
   
-  
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  
-  
   void display() {
 
     if (flip) { 
@@ -190,7 +174,6 @@ class Target {
       if (shot)image(targethit1, xTarget, yTarget);
       else { 
         scale(-1.0, 1.0);
-        
       if (level==1) { 
       image(target1, -xTarget, yTarget);
       duckLoop.loop();
@@ -227,11 +210,6 @@ class Target {
     }
   }
 }
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 class specialTarget {
   boolean flip = false;
   boolean shot = false;
@@ -241,12 +219,7 @@ class specialTarget {
     xTarget1 = x;
     vx=level*2;
     yTarget1 = y;
-  }
-  
-  
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  
-  
+  } 
   void display() {
     if (shot) {
       yTarget1+=15;
@@ -267,10 +240,6 @@ class specialTarget {
     }
   }
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 ArrayList <Target> targets = new ArrayList<Target>();
 ArrayList <specialTarget> targets1 = new ArrayList<specialTarget>();
 //ArrayList<PImage> images = new ArrayList<PImage>();
@@ -280,20 +249,13 @@ ArrayList <specialTarget> targets1 = new ArrayList<specialTarget>();
 //image(images.get(0),  123, 234 );
 ArrayList <PImage> bullets = new ArrayList<PImage>(); 
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 void draw() {
-
   //println("level: " + level + "       Max Level:" + maxLevel);
   println(dataCounter1);
   scalc = score/2;
-
   if (level > maxLevel) {
     maxLevel = level;
   }
-
   if (state == 0) {
     timeLeft=(int)(20-(((frameCount-levelFrame)%1200)/60));
     if (lives<=0) {
@@ -348,7 +310,6 @@ void draw() {
 //        background(255,0,0)
 //        textSize(
       }
-
       if ((frameCount-levelFrame)%1200==720) {
         targets1.add(new specialTarget(0, (int)random(50, height-50)));
       }
@@ -385,11 +346,9 @@ void draw() {
       textSize(30);
       textAlign(RIGHT);
 //      text("score: "+score, width-10, 50);
-      
 //      if (
       scalc = score/2;
       image(sbar[scalc], width/2-150, 20);
-      
       //text("lives: "+lives, width-10, 100);
       //text("highscore: "+highscore, width-10, 30);
       text("time: "+timeLeft, width-20, 120);
@@ -443,9 +402,7 @@ void draw() {
 //        state = 4;
 //        image(background7, 0, 0);
 //        image(levelinfo7, (width/2-120), (height/2+50));
-      }
-    
-    
+      } 
     textAlign(CENTER);
     textSize(18);
 //    text("Level " + (level+1), width/2, height/2);
@@ -458,7 +415,6 @@ void draw() {
       lives = 5;
       numBullets = 5;
       level++;
-      
       specialtargethit=false;
       targets1.remove(0);
       state = 0;
@@ -483,9 +439,7 @@ void draw() {
 //    text("press 2 to exit",(width/2 - 100), (height/2 + 310));
 //    appendTextToFile(outFilename, str(maxLevel));rr
   popMatrix();
-
   }
-  
   if (numBullets == 0) {
     textSize(18);
     textAlign(CENTER);
@@ -493,12 +447,6 @@ void draw() {
     text("Press \"R\" to Reload", (mouseX ), (mouseY-50));
   }
 }
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 void keyPressed() {
   if (key==' ' && (frameCount - lastClear) > 60*7) {
     targets.clear();
@@ -510,7 +458,6 @@ void keyPressed() {
     reload1.rewind();
     reload1.play();
   }
-
     if (key=='q'){
       state = 0;
       setup();
@@ -521,27 +468,18 @@ void keyPressed() {
 //      noLoop();
     state = 4;
   }
-
   if ((key=='d') || (key=='D')) {
   }
 }
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 void mousePressed() {
-  if ((mousePressed) && (state !=2) {
+  if (mousePressed) {
     //javax.swing.JOptionPane.showOptionDialog(frame,"Are you sure you want to shoot?");
-
     int userInput = JOptionPane.showOptionDialog(frame, "Are you sure you want to shoot?", "Click to select", 
       JOptionPane.YES_NO_CANCEL_OPTION, 
       JOptionPane.QUESTION_MESSAGE, 
       null, 
       options, 
       null);
-    //println(userInput);
-
     if ((userInput == 0) && (frameCount - lastReload>=60)) {
       noCursor();
       if (numBullets > 0) {
@@ -573,9 +511,7 @@ void mousePressed() {
         else {
           gunshot2.rewind();
           gunshot2.play();
-        }
-       
-      
+        }    
         for (int i=0; i<targets.size(); i++) {
           if (dist(mouseX, mouseY, targets.get(i).xTarget, targets.get(i).yTarget+50)<100&&dist(mouseX, mouseY, targets.get(i).xTarget, targets.get(i).yTarget+50)>20&&lives>0) {
             score++;
@@ -610,8 +546,6 @@ void mousePressed() {
                 targetHit1.rewind();
                 targetHit1.play();
               }
-            
-
            if (targets.get(i).yTarget>1280) {
               targets.remove(i);
                 if(level==1) {
@@ -642,7 +576,6 @@ void mousePressed() {
                 targetHit1.rewind();
                 targetHit1.play();
               }
-                
             }
           } else if (dist(mouseX, mouseY, targets.get(i).xTarget, targets.get(i).yTarget+50)<20&&dist(mouseX, mouseY, targets.get(i).xTarget-50, targets.get(i).yTarget)>0&&lives>0) {
 //            score+=level*3;
@@ -698,17 +631,8 @@ void mousePressed() {
       draw();
       frameCount = 0;
       score = 0;
-      
-
       }
       //else{}
     }
-
 }
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
 
