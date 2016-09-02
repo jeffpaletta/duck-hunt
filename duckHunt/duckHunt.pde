@@ -1,14 +1,15 @@
-import processing.sound.*;
+//import processing.sound.*;
+
 import javax.swing.JOptionPane; 
 
-/* Duck Hunt Version 2*/
+/* Duck Hunt Version 8*/
 
 
-PImage location-1;
-PImage location-2;
-PImage location-3;
-PImage location-4;
-PImage location-5;
+PImage background1;
+PImage background2;
+PImage background3;
+PImage background4;
+PImage background5;
 
 SoundFile bang;
 SoundFile ouch;
@@ -28,12 +29,18 @@ Object[] options = {"Yes", "No"};
 
 void setup() {
   size(1920, 1080);
-//  surface.setResizable(true);
-  //fullScreen();
-  
+  noCursor();
 
-  location-1 = loadImage("bg_big.jpg");
-  location-2 = loadImage("background2.jpg");
+  //  surface.setResizable(true);
+  //fullScreen();
+
+
+  background1 = loadImage("bg1.jpg");
+  background2 = loadImage("bg2.jpg");
+  background3 = loadImage("bg3.jpg");
+  background4 = loadImage("bg4.jpg");
+  background5 = loadImage("bg5.jpg");  
+
   duck = loadImage("duck.png");
   shotgun = loadImage("shotgun.png");
   bullet = loadImage("bullet.png");
@@ -41,7 +48,7 @@ void setup() {
   duckhuntingbeginningscreen = loadImage("duckhuntingbeginningscreen.jpg");
   explosion = loadImage("explosion.png");
   roastduck = loadImage("roastduck.png");
-  
+
   bang = new SoundFile(this, "bang.mp3");
   ouch = new SoundFile(this, "ouch.mp3");
   noCursor();
@@ -71,8 +78,7 @@ class Duck {
       }
       popMatrix();
       xDuck-=vx;
-    }
-    else {
+    } else {
       pushMatrix();
       if (shot)image(roastduck, xDuck, yDuck);
       else image(duck, xDuck, yDuck);
@@ -110,8 +116,7 @@ class Goduck {
       image(goldenduck, -xDuck1, yDuck1);
       popMatrix();
       xDuck1-=vx;
-    }
-    else {
+    } else {
       pushMatrix();
       image(goldenduck, xDuck1, yDuck1);
       popMatrix();
@@ -128,7 +133,7 @@ ArrayList <Goduck> ducks1 = new ArrayList<Goduck>();
 //image(images.get(0),  123, 234 );
 ArrayList <PImage> bullets = new ArrayList<PImage>(); 
 void draw() {
-    println((stage) + (state));
+  println((stage) + (state));
 
   if (state == 0) {
     timeLeft=(int)(60-(((frameCount-stageFrame)%1200)/60));
@@ -150,8 +155,7 @@ void draw() {
         goldDuckShot= false;
         ducks1.get(0).vx=stage*2;
       }
-    }
-    else {
+    } else {
       if (frameCount%(120-(10*stage))==0) {
         int derpx;
         int derpy = (int)random(0, 500);
@@ -159,20 +163,24 @@ void draw() {
         if (random(0, 2)>1) {
           derpx=1920;
           derpsplit = true;
-        }
-        else {
+        } else {
           derpx=0;
           derpsplit = false;
         }
         ducks.add(new Duck(derpx, derpy, derpsplit));
       }
-      if (stage==1){
-        image(location-1, 0, 0);
-      } else if (stage==2){
-        image(location-2, 0, 0);
+      if (stage==1) {
+        image(background1, 0, 0);
+      } else if (stage==2) {
+        image(background2, 0, 0);
+      } else if (stage==3) {
+        image(background3, 0, 0);
+      } else if (stage==4) {
+        image(background4, 0, 0); 
       } else {
-        image(location-2, 0, 0);
+        image(background5, 0, 0);
       }
+
       if ((frameCount-stageFrame)%1200==1080) {
         ducks1.add(new Goduck(0, (int)random(50, height-50)));
       }
@@ -186,7 +194,7 @@ void draw() {
           }
         }
       }
-      for (int i=0;i<ducks.size();i++) {
+      for (int i=0; i<ducks.size(); i++) {
         ducks.get(i).display();
         if (ducks.get(i).bull) {
           fill(0);
@@ -212,9 +220,9 @@ void draw() {
       //text("highscore: "+highscore, width-10, 30);
       text("Time Left: "+timeLeft, width-10, 90);
       textAlign(LEFT);
-      image(bullet,0,540);
+      image(bullet, 0, 540);
       //text("Bullets: "+numBullets, 10, 590);
-      for (int j = 0 ; j < numBullets; j++) {
+      for (int j = 0; j < numBullets; j++) {
         if (state==0) {
           image(bullet, j*10+10, 540);
         }
@@ -223,7 +231,7 @@ void draw() {
   }
   if (state == 2) {
     background(0); 
-    //image(duckhuntingbeginningscreen, width/2-210, 50); 
+    image(duckhuntingbeginningscreen, width/2-210, 50); 
     textAlign(CENTER);
     text("Intro page \n press enter to begin", width/2, height/2+150);
     if (keyPressed) {
@@ -249,7 +257,6 @@ void draw() {
       ducks1.remove(0);
       state = 0;
     }
-
   }
 }
 void keyPressed() {
@@ -263,50 +270,51 @@ void keyPressed() {
   }
 }
 void keyReleased() {
-  //javax.swing.JOptionPane.showOptionDialog(frame,"Are you sure you want to shoot?");
-    if (key=='s'){
-    int userInput = JOptionPane.showOptionDialog(frame, "Are you sure you want to shoot?", " ",
-    JOptionPane.YES_NO_CANCEL_OPTION,
-    JOptionPane.QUESTION_MESSAGE,
-    null,
-    options,
-    null);
+  if (key=='s') {
+    //javax.swing.JOptionPane.showOptionDialog(frame,"Are you sure you want to shoot?");
+
+    int userInput = JOptionPane.showOptionDialog(frame, "Are you sure you want to shoot?", " ", 
+      JOptionPane.YES_NO_CANCEL_OPTION, 
+      JOptionPane.QUESTION_MESSAGE, 
+      null, 
+      options, 
+      null);
     println(userInput);
-   
-  if ((userInput == 0) && (frameCount - lastReload>=60)) {
-    if (numBullets > 0) {
-      numBullets--;
-      bang.play();
-      for (int i=0;i<ducks.size();i++) {
-        if (dist(mouseX, mouseY, ducks.get(i).xDuck, ducks.get(i).yDuck+50)<100&&dist(mouseX, mouseY, ducks.get(i).xDuck, ducks.get(i).yDuck+50)>20&&lives>0) {
-          score+=stage;
-          ducks.get(i).murpx=ducks.get(i).xDuck;
-          ducks.get(i).murpy=ducks.get(i).yDuck;
-          ducks.get(i).shot=true;
-          ouch.play();
 
-
-          if (ducks.get(i).yDuck>1920) {
-            ducks.remove(i);
+    if ((userInput == 0) && (frameCount - lastReload>=60)) {
+      noCursor();
+      if (numBullets > 0) {
+        numBullets--;
+        bang.play();
+        for (int i=0; i<ducks.size(); i++) {
+          if (dist(mouseX, mouseY, ducks.get(i).xDuck, ducks.get(i).yDuck+50)<100&&dist(mouseX, mouseY, ducks.get(i).xDuck, ducks.get(i).yDuck+50)>20&&lives>0) {
+            score+=stage;
+            ducks.get(i).murpx=ducks.get(i).xDuck;
+            ducks.get(i).murpy=ducks.get(i).yDuck;
+            ducks.get(i).shot=true;
             ouch.play();
 
-          }
-        }
-        else if (dist(mouseX, mouseY, ducks.get(i).xDuck, ducks.get(i).yDuck+50)<20&&dist(mouseX, mouseY, ducks.get(i).xDuck-50, ducks.get(i).yDuck)>0&&lives>0) {
-          score+=stage*3;
-          ducks.get(i).murpx=ducks.get(i).xDuck;
-          ducks.get(i).murpy=ducks.get(i).yDuck;
-          ducks.get(i).shot=true;
-          ducks.get(i).bull=true;
-          
-          if (ducks.get(i).yDuck>1920) {
-            ducks.remove(i);
-            ouch.play();
+
+            if (ducks.get(i).yDuck>1920) {
+              ducks.remove(i);
+              ouch.play();
+            }
+          } else if (dist(mouseX, mouseY, ducks.get(i).xDuck, ducks.get(i).yDuck+50)<20&&dist(mouseX, mouseY, ducks.get(i).xDuck-50, ducks.get(i).yDuck)>0&&lives>0) {
+            score+=stage*3;
+            ducks.get(i).murpx=ducks.get(i).xDuck;
+            ducks.get(i).murpy=ducks.get(i).yDuck;
+            ducks.get(i).shot=true;
+            ducks.get(i).bull=true;
+
+            if (ducks.get(i).yDuck>1920) {
+              ducks.remove(i);
+              ouch.play();
+            }
           }
         }
       }
+    } else {
+      noCursor();
     }
   }
-    }
-  
 }
