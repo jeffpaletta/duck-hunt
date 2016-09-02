@@ -1,7 +1,12 @@
+import processing.sound.*;
+
 /* Duck Hunt Version 2*/
+
 
 PImage backgroundImg;
 PImage backgroundImg2;
+SoundFile bang;
+SoundFile ouch;
 
 PImage duck;
 PImage shotgun;
@@ -16,7 +21,11 @@ boolean shoot = false;
 boolean goldDuckShot = false;
 
 void setup() {
-  size(700, 600);  
+  size(700, 600);
+//  surface.setResizable(true);
+  //fullScreen();
+  
+
   backgroundImg = loadImage("background_image.jpg");
   backgroundImg2 = loadImage("background2.jpg");
   duck = loadImage("duck.png");
@@ -26,6 +35,9 @@ void setup() {
   duckhuntingbeginningscreen = loadImage("duckhuntingbeginningscreen.jpg");
   explosion = loadImage("explosion.png");
   roastduck = loadImage("roastduck.png");
+  
+  bang = new SoundFile(this, "bang.mp3");
+  ouch = new SoundFile(this, "ouch.mp3");
   noCursor();
 }
 class Duck {
@@ -246,19 +258,23 @@ void keyPressed() {
 }
 void mousePressed() {
   javax.swing.JOptionPane.showMessageDialog(frame,"Are you sure you want to shoot?");
-  
   if (frameCount - lastReload>=60) {
     if (numBullets > 0) {
       numBullets--;
+      bang.play();
       for (int i=0;i<ducks.size();i++) {
         if (dist(mouseX, mouseY, ducks.get(i).xDuck, ducks.get(i).yDuck+50)<100&&dist(mouseX, mouseY, ducks.get(i).xDuck, ducks.get(i).yDuck+50)>20&&lives>0) {
           score+=stage;
           ducks.get(i).murpx=ducks.get(i).xDuck;
           ducks.get(i).murpy=ducks.get(i).yDuck;
           ducks.get(i).shot=true;
+          ouch.play();
+
 
           if (ducks.get(i).yDuck>600) {
             ducks.remove(i);
+            ouch.play();
+
           }
         }
         else if (dist(mouseX, mouseY, ducks.get(i).xDuck, ducks.get(i).yDuck+50)<20&&dist(mouseX, mouseY, ducks.get(i).xDuck-50, ducks.get(i).yDuck)>0&&lives>0) {
@@ -267,8 +283,10 @@ void mousePressed() {
           ducks.get(i).murpy=ducks.get(i).yDuck;
           ducks.get(i).shot=true;
           ducks.get(i).bull=true;
+          
           if (ducks.get(i).yDuck>600) {
             ducks.remove(i);
+            ouch.play();
           }
         }
       }
