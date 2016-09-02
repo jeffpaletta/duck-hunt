@@ -473,13 +473,17 @@ void draw() {
     textFont(serif);
     textSize(31);
     fill(0);
-    text("Gunman kills " + score + ", including " + kids + " kids, at Mich. school", (width/2-340), (height/2-350);
+    pushMatrix();
+    translate(0,0);
+    text("Gunman kills " + score + ", including " + kids + " kids, at Mich. school", ((width/2)-338), ((height/2)-35));
 //    textSize(30);
 //    text(("but " + numUsersLess + "% of players put the "), (width/2 - 100), (height/2 + 80));
 //    text(("gun down before you did"), (width/2 - 100), (height/2 + 110));
 //    textSize(18);
 //    text("press 2 to exit",(width/2 - 100), (height/2 + 310));
-//    appendTextToFile(outFilename, str(maxLevel));
+//    appendTextToFile(outFilename, str(maxLevel));rr
+  popMatrix();
+
   }
 }
 
