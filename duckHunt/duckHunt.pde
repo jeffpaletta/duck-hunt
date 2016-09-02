@@ -1,114 +1,265 @@
-/* Duck Hunt Prototype 1 */
+/* Duck Hunt Version 2*/
 
-class MovingSprite
-{
-   float x, y ;
-   float xVel, yVel ;
-   PImage theImage;
-   float msWidth, msHeight ;
-   boolean isHidden ;
+PImage backgroundImg;
+PImage duck;
+PImage shotgun;
+PImage bullet;
+PImage goldenduck;
+PImage duckhuntingbeginningscreen;
+PImage explosion;
+PImage roastduck;
+int state=2, stage = 1, numBullets = 5, lastClear = 0, lastReload = 0, stageFrame = 0, lives = 5, score, highscore, timeLeft;
+boolean dead = false;
+boolean shoot = false;
+boolean goldDuckShot = false;
 
-   MovingSprite(float inX, float inY)
-   {
-     xVel = random(10) ;
-     yVel = random(10) ;
-     theImage = loadImage("duck50.png");
-     x = inX ;
-     y = inY ;
-     isHidden = false ;
-   }
-   
-   void setIsHidden(boolean inValue) { isHidden = inValue;}
-   // getter
-   float getX() { return (x) ;}
-   float getY() { return (y) ; }
-   boolean getIsHidden() { return isHidden ;}  // return true if hidden
-   boolean isVisible() {  return !isHidden ;}
-   
-   void updateLocation()
-   {
-     x = x + xVel ;
-     y = y + yVel ;
-     if ( (x <=0) ||  ( (x+50) >= width)   )
-       xVel = xVel * -1 ;
-     if (  (y <= 0) || ( (y+50) >= height)  )
-       yVel = yVel * -1 ;
-   }
-   void drawSprite()
-   {
-     if (!isHidden)
-       image(theImage,x,y) ;
-   }
-   boolean containsPoint(float inPx, float inPy)
-   {
-      if ( (inPx > x) && (inPx < (x + 50) ) && (inPy > y) && (inPy < (y+50) ) )
-        return (true) ; 
-      else
-        return(false) ;
-   }
+void setup() {
+  size(700, 600);  
+  backgroundImg = loadImage("background.jpg");
+  duck = loadImage("duck.png");
+  shotgun = loadImage("shotgun.png");
+  bullet = loadImage("bullet.png");
+  goldenduck = loadImage("duck.png");
+  duckhuntingbeginningscreen = loadImage("duckhuntingbeginningscreen.jpg");
+  explosion = loadImage("explosion.png");
+  roastduck = loadImage("roastduck.png");
+  noCursor();
 }
+class Duck {
+  boolean flip = false;
+  boolean bull = false;
+  boolean shot = false;
+  float vx;
+  float xDuck, yDuck;
+  float murpx, murpy;
+  int count = 0;
+  Duck(int x, int y, boolean toflip) {
+    flip = toflip;
+    xDuck = x;
+    vx=stage;
+    yDuck = y;
+  }
+  void display() {
 
-MovingSprite[] ducks;
-int NUMDUCKS=10;
-int numNotHidden ;
-String output1 = "YOU WIN!";
-String output2 = "You lose.";
+    if (flip) { 
+      pushMatrix();
+      if (shot)image(roastduck, xDuck, yDuck);
+      else { 
+        scale(-1.0, 1.0);
+        image(duck, -xDuck, yDuck);
+      }
+      popMatrix();
+      xDuck-=vx;
+    }
+    else {
+      pushMatrix();
+      if (shot)image(roastduck, xDuck, yDuck);
+      else image(duck, xDuck, yDuck);
+      popMatrix();
+      xDuck+=vx;
+    }
+    if (shot)yDuck+=15;
 
-Timer timer ;
 
-void setup()
-{
-  size(800,800) ;
-  timer = new Timer(10,60,60) ;
-  timer.start() ;
-  numNotHidden = 10 ;
-  ducks = new MovingSprite[NUMDUCKS];
-  for(int i=0;i<NUMDUCKS;i++)
-  {
-    ducks[i]=new MovingSprite(random(700), 700);
+    if (shot&&count<20) {
+      count++;
+      vx=0;
+      image(explosion, murpx, murpy);
+    }
   }
 }
-
-void draw()
-{
-  if((timer.currentTime()>0)&&(numNotHidden>0))
-  {
-    background(0,0,255) ;
-    timer.DisplayTime() ;
-    fill(0,255,0);
-     rect(0,600,800,200);
-     for(int i=0;i<NUMDUCKS;i++)
-     {
-      ducks[i].updateLocation() ;
-      ducks[i].drawSprite() ;
-     }
+class Goduck {
+  boolean flip = false;
+  boolean shot = false;
+  float vx;
+  float xDuck1, yDuck1;
+  Goduck(int x, int y) {
+    xDuck1 = x;
+    vx=stage*2;
+    yDuck1 = y;
   }
-  if((timer.currentTime()>0)&&(numNotHidden==0))
-  {
+  void display() {
+    if (shot) {
+      yDuck1+=15;
+      vx=0;
+    }
+    if (flip) { 
+      pushMatrix();
+      scale(-1.0, 1.0);
+      image(goldenduck, -xDuck1, yDuck1);
+      popMatrix();
+      xDuck1-=vx;
+    }
+    else {
+      pushMatrix();
+      image(goldenduck, xDuck1, yDuck1);
+      popMatrix();
+      xDuck1+=vx;
+    }
+  }
+}
+ArrayList <Duck> ducks = new ArrayList<Duck>();
+ArrayList <Goduck> ducks1 = new ArrayList<Goduck>();
+//ArrayList<PImage> images = new ArrayList<PImage>();
+//images.add(loadImage("thefile.png"));
+//images.add(loadIMage("asdfasdf"));
+//PImage bla = images.get(0);ad
+//image(images.get(0),  123, 234 );
+ArrayList <PImage> bullets = new ArrayList<PImage>(); 
+void draw() {
+  if (state == 0) {
+    timeLeft=(int)(60-(((frameCount-stageFrame)%1200)/60));
+    if (lives<=0) {
+      background(255, 0, 0);
+      textSize(50);
+      text("you lose?", width/2+125, height/2);
+      lives=0;
+      if (mousePressed) {
+        ducks.clear();
+        score = 0;
+        lives = 5;
+        numBullets = 5;
+        stage = 1;
+        stageFrame=0;
+        lastReload = 0;
+        lastClear = 0;
+        frameCount = 0;
+        goldDuckShot= false;
+        ducks1.get(0).vx=stage*2;
+      }
+    }
+    else {
+      if (frameCount%(120-(10*stage))==0) {
+        int derpx;
+        int derpy = (int)random(0, 500);
+        boolean derpsplit;
+        if (random(0, 2)>1) {
+          derpx=700;
+          derpsplit = true;
+        }
+        else {
+          derpx=0;
+          derpsplit = false;
+        }
+        ducks.add(new Duck(derpx, derpy, derpsplit));
+      }
+      image(backgroundImg, 0, 0);
+      if ((frameCount-stageFrame)%1200==600) {
+        ducks1.add(new Goduck(0, (int)random(50, height-50)));
+      }
+      if ((frameCount-stageFrame)%1200>600) {
+        if (ducks1.size()>0) {
+          ducks1.get(0).display();
+          if (goldDuckShot==false&&mousePressed&&dist(mouseX, mouseY, ducks1.get(0).xDuck1, ducks1.get(0).yDuck1)<60&&lives>0) {
+            goldDuckShot=true;
+            score+=stage*10;
+            ducks1.get(0).shot=true;
+          }
+        }
+      }
+      for (int i=0;i<ducks.size();i++) {
+        ducks.get(i).display();
+        if (ducks.get(i).bull) {
+          fill(0);
+          text("Bullseye!", ducks.get(i).xDuck, ducks.get(i).yDuck);
+        }
+        if (700<ducks.get(i).xDuck||ducks.get(i).xDuck<0) {
+          //lives--;
+          ducks.remove(i);
+        }
+      }
+      if (score>=highscore) {
+        highscore=score;
+      }
+      image(shotgun, mouseX-348, mouseY-205);
+      if ((frameCount - stageFrame)%1200==0) {
+        state = 1;
+      }
+      fill(255);
+      textSize(10);
+      textAlign(RIGHT);
+      text("score: "+score, width-10, 50);
+      text("lives: "+lives, width-10, 70);
+      //text("highscore: "+highscore, width-10, 30);
+      //text("Time Left: "+timeLeft, width-10, 90);
+      //textAlign(LEFT);
+      //image(bullet,0,540);
+      //text("Bullets: "+numBullets, 10, 590);
+      for (int j = 0 ; j < numBullets; j++) {
+        if (state==0) {
+          image(bullet, j*10+10, 540);
+        }
+      }
+    }
+  }
+  if (state == 2) {
+    background(0); 
+    //image(duckhuntingbeginningscreen, width/2-210, 50); 
+    textAlign(CENTER);
+    text("Intro page \n press any key to shoot stuff", width/2, height/2+150);
+    if (keyPressed) {
+      frameCount = 0;
+      state = 0;
+    }
+  }
+  if (state==1) {
     background(0);
-    fill(0,0,255);
-    text(output1,300,400) ;
-  }
-  if((timer.currentTime()<=0)&&(numNotHidden>0))
-  {
-    background(0);
-    fill(255,0,0);
-    text(output2,300,400) ;
+    textAlign(CENTER);
+    textSize(50);
+    text("Stage " + (stage+1), width/2, height/2);
+    text("Click to Continue", width/2, height/2+50);
+    lives = 5;
+    if (mousePressed&&(frameCount-stageFrame)>=1300) {
+      ducks.clear();
+      stageFrame = frameCount;
+      //frameCount=0;
+      lives = 100;
+      numBullets = 5;
+      stage++;
+      goldDuckShot=false;
+      ducks1.remove(0);
+      state = 0;
+    }
   }
 }
-
-
-void mousePressed()
-{
-  for(int i=0;i<NUMDUCKS;i++)
-  {
-  if (  ducks[i].isVisible()  && ducks[i].containsPoint(mouseX,mouseY) )
-  {
-    ducks[i].setIsHidden(true) ;
-    numNotHidden -= 1 ;
+void keyPressed() {
+  if (key==' ' && (frameCount - lastClear) > 60*7) {
+    ducks.clear();
+    lastClear = frameCount;
   }
+  if (key=='r') {
+    lastReload = frameCount;
+    numBullets = 5;
   }
-  println(numNotHidden) ;
-  if (numNotHidden == 0)
-    println("rip") ;
+}
+void mousePressed() {
+  javax.swing.JOptionPane.showMessageDialog(frame,"Are you sure you want to shoot?");
+  
+  if (frameCount - lastReload>=60) {
+    if (numBullets > 0) {
+      numBullets--;
+      for (int i=0;i<ducks.size();i++) {
+        if (dist(mouseX, mouseY, ducks.get(i).xDuck, ducks.get(i).yDuck+50)<100&&dist(mouseX, mouseY, ducks.get(i).xDuck, ducks.get(i).yDuck+50)>20&&lives>0) {
+          score+=stage;
+          ducks.get(i).murpx=ducks.get(i).xDuck;
+          ducks.get(i).murpy=ducks.get(i).yDuck;
+          ducks.get(i).shot=true;
+
+          if (ducks.get(i).yDuck>600) {
+            ducks.remove(i);
+          }
+        }
+        else if (dist(mouseX, mouseY, ducks.get(i).xDuck, ducks.get(i).yDuck+50)<20&&dist(mouseX, mouseY, ducks.get(i).xDuck-50, ducks.get(i).yDuck)>0&&lives>0) {
+          score+=stage*3;
+          ducks.get(i).murpx=ducks.get(i).xDuck;
+          ducks.get(i).murpy=ducks.get(i).yDuck;
+          ducks.get(i).shot=true;
+          ducks.get(i).bull=true;
+          if (ducks.get(i).yDuck>600) {
+            ducks.remove(i);
+          }
+        }
+      }
+    }
+  }
 }
