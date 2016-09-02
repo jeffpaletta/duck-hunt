@@ -2,7 +2,7 @@
 ////////////////////////////////////////////////////////////
 
 //import processing.sound.*;
-
+import gifAnimation.*;
 import ddf.minim.*;
 //import ddf.minim.analysis.*;
 //import ddf.minim.effects.*;
@@ -73,9 +73,20 @@ AudioPlayer slowdying;
 AudioPlayer childrenscream;
 AudioPlayer targethit33;
 
-
+AudioPlayer ambient1;
+AudioPlayer ambient2;
+AudioPlayer ambient3;
+AudioPlayer ambient4;
+AudioPlayer ambient5;
+AudioPlayer ambient6;
+AudioPlayer ambient7;
 
 PImage target1;
+PImage duckHigh;
+PImage duckLow;
+
+PImage[] duckAnimation;
+Gif duckLoop;
 
 
 PImage targethit1;
@@ -122,12 +133,17 @@ void setup() {
   background7 = loadImage("graphics/backgrounds/level7.jpg");  
 
 
-  target1 = loadImage("graphics/targets/target1.png");
+//  target1 = loadImage("graphics/targets/flappyduck.gif");
+//  duckHigh = loadImage("graphics/targets/duckHigh.png");
+//  duckLow = loadImage("graphics/targets/duckLow.png");
 
+  duckLoop = new Gif(this, "graphics/targets/3.gif");
+  duckLoop.loop();
 
   targethit1 = loadImage("graphics/targets/targethit1.png");
 
   specialtarget1 = target1;
+  target1 = duckLoop;
 
   crosshair = loadImage("graphics/crosshair.png");
   bullet = loadImage("graphics/bullet.png");
@@ -152,6 +168,10 @@ void setup() {
   
   reload1 = minim.loadFile("audio/reload1.mp3");
   reload2 = minim.loadFile("audio/reload2.mp3");
+  
+  
+  //ambient1 = minim.loadFile("audio/reload2.mp3");
+  
   
   childrenscream = minim.loadFile("audio/childrenscream.mp3");
   gunshotburst = minim.loadFile("audio/gunshotburst.mp3");
@@ -234,7 +254,11 @@ class Target {
       else { 
         scale(-1.0, 1.0);
         
-      if (level==1) { image(target1, -xTarget, yTarget); }
+      if (level==1) { 
+      image(target1, -xTarget, yTarget);
+      duckLoop.loop();
+      duckLoop.play();   
+    }
         else if (level==1) { image(target1, -xTarget, yTarget); }
         else if (level==2) { image(target1, -xTarget, yTarget); }
         else if (level==3) { image(target1, -xTarget, yTarget); }
@@ -243,7 +267,8 @@ class Target {
         else if (level==6) { image(target1, -xTarget, yTarget); }
         //else if (level==7) { image(target1, -xTarget, yTarget); }
         else {  }
-          
+        duckLoop.loop();
+        duckLoop.play();  
         scale(-1.0, 1.0);
       }
       popMatrix();
@@ -297,7 +322,8 @@ class specialTarget {
       xTarget1-=vx;
     } else {
       pushMatrix();
-      image(specialtarget1, xTarget1, yTarget1);
+      image(target1, xTarget1, yTarget1);
+      duckLoop.play();
       popMatrix();
       xTarget1+=vx;
     }
