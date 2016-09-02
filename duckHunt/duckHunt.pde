@@ -1,4 +1,5 @@
 import processing.sound.*;
+import javax.swing.JOptionPane; 
 
 /* Duck Hunt Version 2*/
 
@@ -19,14 +20,15 @@ int state=2, stage = 1, numBullets = 5, lastClear = 0, lastReload = 0, stageFram
 boolean dead = false;
 boolean shoot = false;
 boolean goldDuckShot = false;
+Object[] options = {"Yes", "No"};
 
 void setup() {
-  size(700, 600);
+  size(1920, 1080);
 //  surface.setResizable(true);
   //fullScreen();
   
 
-  backgroundImg = loadImage("background_image.jpg");
+  backgroundImg = loadImage("bg_big.jpg");
   backgroundImg2 = loadImage("background2.jpg");
   duck = loadImage("duck.png");
   shotgun = loadImage("shotgun.png");
@@ -151,7 +153,7 @@ void draw() {
         int derpy = (int)random(0, 500);
         boolean derpsplit;
         if (random(0, 2)>1) {
-          derpx=700;
+          derpx=1920;
           derpsplit = true;
         }
         else {
@@ -167,10 +169,10 @@ void draw() {
       } else {
         image(backgroundImg2, 0, 0);
       }
-      if ((frameCount-stageFrame)%1200==600) {
+      if ((frameCount-stageFrame)%1200==1080) {
         ducks1.add(new Goduck(0, (int)random(50, height-50)));
       }
-      if ((frameCount-stageFrame)%1200>600) {
+      if ((frameCount-stageFrame)%1200>1080) {
         if (ducks1.size()>0) {
           ducks1.get(0).display();
           if (goldDuckShot==false&&mousePressed&&dist(mouseX, mouseY, ducks1.get(0).xDuck1, ducks1.get(0).yDuck1)<60&&lives>0) {
@@ -186,7 +188,7 @@ void draw() {
           fill(0);
           text("Bullseye!", ducks.get(i).xDuck, ducks.get(i).yDuck);
         }
-        if (700<ducks.get(i).xDuck||ducks.get(i).xDuck<0) {
+        if (1920<ducks.get(i).xDuck||ducks.get(i).xDuck<0) {
           //lives--;
           ducks.remove(i);
         }
@@ -257,8 +259,17 @@ void keyPressed() {
   }
 }
 void mousePressed() {
-  javax.swing.JOptionPane.showMessageDialog(frame,"Are you sure you want to shoot?");
-  if (frameCount - lastReload>=60) {
+  //javax.swing.JOptionPane.showOptionDialog(frame,"Are you sure you want to shoot?");
+    
+    int userInput = JOptionPane.showOptionDialog(frame, "Are you sure you want to shoot?", " ",
+    JOptionPane.YES_NO_CANCEL_OPTION,
+    JOptionPane.QUESTION_MESSAGE,
+    null,
+    options,
+    null);
+    println(userInput);
+   
+  if ((userInput == 0) && (frameCount - lastReload>=60)) {
     if (numBullets > 0) {
       numBullets--;
       bang.play();
@@ -271,7 +282,7 @@ void mousePressed() {
           ouch.play();
 
 
-          if (ducks.get(i).yDuck>600) {
+          if (ducks.get(i).yDuck>1920) {
             ducks.remove(i);
             ouch.play();
 
@@ -284,7 +295,7 @@ void mousePressed() {
           ducks.get(i).shot=true;
           ducks.get(i).bull=true;
           
-          if (ducks.get(i).yDuck>600) {
+          if (ducks.get(i).yDuck>1920) {
             ducks.remove(i);
             ouch.play();
           }
@@ -292,4 +303,5 @@ void mousePressed() {
       }
     }
   }
+  
 }
