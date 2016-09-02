@@ -1,92 +1,135 @@
+/* Duck Hunt Version 8*/
+////////////////////////////////////////////////////////////
+
 //import processing.sound.*;
+
+import ddf.minim.*;
+//import ddf.minim.analysis.*;
+//import ddf.minim.effects.*;
+//import ddf.minim.signals.*;
+//import ddf.minim.spi.*;
+import ddf.minim.ugens.*;
 
 import javax.swing.JOptionPane; 
 
-/* Duck Hunt Version 8*/
-
-
+PImage background0;
 PImage background1;
 PImage background2;
 PImage background3;
 PImage background4;
 PImage background5;
+PImage background6;
+PImage background7;
 
-SoundFile bang;
-SoundFile ouch;
+//SoundFile gunshot;
+//SoundFile targetHit1;
 
-PImage duck;
+Minim minim;
+Delay delay;
+AudioPlayer gunshot;
+AudioPlayer targetHit1;
+AudioPlayer gunReload;
+
+PImage target1;
+PImage target2;
+PImage target3;
+PImage target4;
+PImage target5;
+PImage target6;
+PImage target7;
+
 PImage shotgun;
 PImage bullet;
-PImage goldenduck;
+PImage specialtarget1;
 PImage duckhuntingbeginningscreen;
 PImage explosion;
-PImage roastduck;
-int state=2, stage = 1, numBullets = 5, lastClear = 0, lastReload = 0, stageFrame = 0, lives = 5, score, highscore, timeLeft;
+PImage targetshot1;
+int state=2, level = 1, numBullets = 5, lastClear = 0, lastReload = 0, levelFrame = 0, lives = 5, score, highscore, timeLeft;
 boolean dead = false;
 boolean shoot = false;
-boolean goldDuckShot = false;
+boolean specialTargetShot = false;
 Object[] options = {"Yes", "No"};
 
 void setup() {
   size(1920, 1080);
   noCursor();
 
-  //  surface.setResizable(true);
+  //surface.setResizable(true);
   //fullScreen();
 
-
+  background0 = loadImage("welcome.jpg");
   background1 = loadImage("bg1.jpg");
   background2 = loadImage("bg2.jpg");
   background3 = loadImage("bg3.jpg");
   background4 = loadImage("bg4.jpg");
   background5 = loadImage("bg5.jpg");  
+  background6 = loadImage("bg6.jpg");  
+  background7 = loadImage("bg7.jpg");  
 
-  duck = loadImage("duck.png");
-  shotgun = loadImage("shotgun.png");
+
+  target1 = loadImage("duck1.png");
+  target2 = loadImage("duck2.png");
+  target3 = loadImage("duck3.png");
+  target4 = loadImage("duck4.png");
+  target5 = loadImage("duck5.png");
+  target6 = loadImage("duck6.png");
+  target7 = loadImage("duck7.png");
+  
+//specialtarget1 = loadImage("student.png");
+  specialtarget1 = target1;
+  
+  
+  shotgun = loadImage("crosshair.png");
   bullet = loadImage("bullet.png");
-  goldenduck = loadImage("student.png");
   duckhuntingbeginningscreen = loadImage("duckhuntingbeginningscreen.jpg");
   explosion = loadImage("explosion.png");
-  roastduck = loadImage("roastduck.png");
+  targetshot1 = loadImage("roastduck.png");
 
-  bang = new SoundFile(this, "bang.mp3");
-  ouch = new SoundFile(this, "ouch.mp3");
+  //gunshot = new SoundFile(this, "gunshot.mp3");
+  //targetHit1 = new SoundFile(this, "targetHit1.mp3");
+  
+  minim = new Minim(this);
+  delay = new Delay(1, 1);
+  
+  gunshot = minim.loadFile("gunshot.mp3");
+  targetHit1 = minim.loadFile("targetHit1.mp3");
+  gunReload = minim.loadFile("reload.wav");
+  
   noCursor();
 }
-class Duck {
+class Target {
   boolean flip = false;
   boolean bull = false;
   boolean shot = false;
   float vx;
-  float xDuck, yDuck;
+  float xTarget, yTarget;
   float murpx, murpy;
   int count = 0;
-  Duck(int x, int y, boolean toflip) {
+  Target(int x, int y, boolean toflip) {
     flip = toflip;
-    xDuck = x;
-    vx=stage;
-    yDuck = y;
+    xTarget = x;
+    vx=level;
+    yTarget = y;
   }
   void display() {
 
     if (flip) { 
       pushMatrix();
-      if (shot)image(roastduck, xDuck, yDuck);
+      if (shot)image(targetshot1, xTarget, yTarget);
       else { 
         scale(-1.0, 1.0);
-        image(duck, -xDuck, yDuck);
+        image(target1, -xTarget, yTarget);
       }
       popMatrix();
-      xDuck-=vx;
+      xTarget-=vx;
     } else {
       pushMatrix();
-      if (shot)image(roastduck, xDuck, yDuck);
-      else image(duck, xDuck, yDuck);
+      if (shot)image(targetshot1, xTarget, yTarget);
+      else image(target1, xTarget, yTarget);
       popMatrix();
-      xDuck+=vx;
+      xTarget+=vx;
     }
-    if (shot)yDuck+=15;
-
+    if (shot)yTarget+=15;
 
     if (shot&&count<20) {
       count++;
@@ -95,37 +138,37 @@ class Duck {
     }
   }
 }
-class Goduck {
+class specialTarget {
   boolean flip = false;
   boolean shot = false;
   float vx;
-  float xDuck1, yDuck1;
-  Goduck(int x, int y) {
-    xDuck1 = x;
-    vx=stage*2;
-    yDuck1 = y;
+  float xTarget1, yTarget1;
+  specialTarget(int x, int y) {
+    xTarget1 = x;
+    vx=level*2;
+    yTarget1 = y;
   }
   void display() {
     if (shot) {
-      yDuck1+=15;
+      yTarget1+=15;
       vx=0;
     }
     if (flip) { 
       pushMatrix();
       scale(-1.0, 1.0);
-      image(goldenduck, -xDuck1, yDuck1);
+      image(specialtarget1, -xTarget1, yTarget1);
       popMatrix();
-      xDuck1-=vx;
+      xTarget1-=vx;
     } else {
       pushMatrix();
-      image(goldenduck, xDuck1, yDuck1);
+      image(specialtarget1, xTarget1, yTarget1);
       popMatrix();
-      xDuck1+=vx;
+      xTarget1+=vx;
     }
   }
 }
-ArrayList <Duck> ducks = new ArrayList<Duck>();
-ArrayList <Goduck> ducks1 = new ArrayList<Goduck>();
+ArrayList <Target> targets = new ArrayList<Target>();
+ArrayList <specialTarget> targets1 = new ArrayList<specialTarget>();
 //ArrayList<PImage> images = new ArrayList<PImage>();
 //images.add(loadImage("thefile.png"));
 //images.add(loadIMage("asdfasdf"));
@@ -133,30 +176,30 @@ ArrayList <Goduck> ducks1 = new ArrayList<Goduck>();
 //image(images.get(0),  123, 234 );
 ArrayList <PImage> bullets = new ArrayList<PImage>(); 
 void draw() {
-  println((stage) + (state));
+  //println((level) + (state));
 
   if (state == 0) {
-    timeLeft=(int)(60-(((frameCount-stageFrame)%1200)/60));
+    timeLeft=(int)(60-(((frameCount-levelFrame)%1200)/60));
     if (lives<=0) {
       background(255, 0, 0);
       textSize(50);
       text("you lose?", width/2+125, height/2);
       lives=0;
       if (mousePressed) {
-        ducks.clear();
+        targets.clear();
         score = 0;
         lives = 5;
         numBullets = 5;
-        stage = 1;
-        stageFrame=0;
+        level = 1;
+        levelFrame=0;
         lastReload = 0;
         lastClear = 0;
         frameCount = 0;
-        goldDuckShot= false;
-        ducks1.get(0).vx=stage*2;
+        specialTargetShot= false;
+        targets1.get(0).vx=level*2;
       }
     } else {
-      if (frameCount%(120-(10*stage))==0) {
+      if (frameCount%(120-(10*level))==0) {
         int derpx;
         int derpy = (int)random(0, 500);
         boolean derpsplit;
@@ -167,49 +210,65 @@ void draw() {
           derpx=0;
           derpsplit = false;
         }
-        ducks.add(new Duck(derpx, derpy, derpsplit));
+        targets.add(new Target(derpx, derpy, derpsplit));
       }
-      if (stage==1) {
+      if (level==1) {
         image(background1, 0, 0);
-      } else if (stage==2) {
+      } 
+      else if (level==2) {
         image(background2, 0, 0);
-      } else if (stage==3) {
+        target1 = target2;
+      } 
+      else if (level==3) {
         image(background3, 0, 0);
-      } else if (stage==4) {
-        image(background4, 0, 0); 
-      } else {
-        image(background5, 0, 0);
+        target1 = target3;
+      } 
+      else if (level==4) {
+        image(background4, 0, 0);
+        target1 = target4;
+      } 
+      else if (level==5) {
+        image(background4, 0, 0);
+        target1 = target5;
+      } 
+      else if (level==6) {
+        image(background4, 0, 0);
+        target1 = target6;
+      } 
+      else {
+        image(background7, 0, 0);
+        target1 = target7;
       }
 
-      if ((frameCount-stageFrame)%1200==1080) {
-        ducks1.add(new Goduck(0, (int)random(50, height-50)));
+      if ((frameCount-levelFrame)%1200==1080) {
+        targets1.add(new specialTarget(0, (int)random(50, height-50)));
       }
-      if ((frameCount-stageFrame)%1200>1080) {
-        if (ducks1.size()>0) {
-          ducks1.get(0).display();
-          if (goldDuckShot==false&&mousePressed&&dist(mouseX, mouseY, ducks1.get(0).xDuck1, ducks1.get(0).yDuck1)<60&&lives>0) {
-            goldDuckShot=true;
-            score+=stage*10;
-            ducks1.get(0).shot=true;
+      if ((frameCount-levelFrame)%1200>1080) {
+        if (targets1.size()>0) {
+          targets1.get(0).display();
+          if (specialTargetShot==false&&mousePressed&&dist(mouseX, mouseY, targets1.get(0).xTarget1, targets1.get(0).yTarget1)<60&&lives>0) {
+            specialTargetShot=true;
+            score+=level*10;
+            targets1.get(0).shot=true;
           }
         }
       }
-      for (int i=0; i<ducks.size(); i++) {
-        ducks.get(i).display();
-        if (ducks.get(i).bull) {
+      for (int i=0; i<targets.size(); i++) {
+        targets.get(i).display();
+        if (targets.get(i).bull) {
           fill(0);
-          text("Bullseye!", ducks.get(i).xDuck, ducks.get(i).yDuck);
+          text("Bullseye!", targets.get(i).xTarget, targets.get(i).yTarget);
         }
-        if (1920<ducks.get(i).xDuck||ducks.get(i).xDuck<0) {
+        if (1920<targets.get(i).xTarget||targets.get(i).xTarget<0) {
           //lives--;
-          ducks.remove(i);
+          targets.remove(i);
         }
       }
       if (score>=highscore) {
         highscore=score;
       }
       image(shotgun, mouseX-348, mouseY-205);
-      if ((frameCount - stageFrame)%1200==0) {
+      if ((frameCount - levelFrame)%1200==0) {
         state = 1;
       }
       fill(255);
@@ -243,30 +302,32 @@ void draw() {
     background(0);
     textAlign(CENTER);
     textSize(50);
-    text("Stage " + (stage+1), width/2, height/2);
+    text("Stage " + (level+1), width/2, height/2);
     text("Press Enter to Continue", width/2, height/2+50);
     lives = 5;
-    if (keyPressed&&(frameCount-stageFrame)>=1300) {
-      ducks.clear();
-      stageFrame = frameCount;
+    if (keyPressed&&(frameCount-levelFrame)>=1300) {
+      targets.clear();
+      levelFrame = frameCount;
       //frameCount=0;
       lives = 100;
       numBullets = 5;
-      stage++;
-      goldDuckShot=false;
-      ducks1.remove(0);
+      level++;
+      specialTargetShot=false;
+      targets1.remove(0);
       state = 0;
     }
   }
 }
 void keyPressed() {
   if (key==' ' && (frameCount - lastClear) > 60*7) {
-    ducks.clear();
+    targets.clear();
     lastClear = frameCount;
   }
   if (key=='r') {
     lastReload = frameCount;
     numBullets = 5;
+    gunReload.rewind();
+    gunReload.play();
   }
 }
 void keyReleased() {
@@ -279,36 +340,40 @@ void keyReleased() {
       null, 
       options, 
       null);
-    println(userInput);
+    //println(userInput);
 
     if ((userInput == 0) && (frameCount - lastReload>=60)) {
       noCursor();
       if (numBullets > 0) {
         numBullets--;
-        bang.play();
-        for (int i=0; i<ducks.size(); i++) {
-          if (dist(mouseX, mouseY, ducks.get(i).xDuck, ducks.get(i).yDuck+50)<100&&dist(mouseX, mouseY, ducks.get(i).xDuck, ducks.get(i).yDuck+50)>20&&lives>0) {
-            score+=stage;
-            ducks.get(i).murpx=ducks.get(i).xDuck;
-            ducks.get(i).murpy=ducks.get(i).yDuck;
-            ducks.get(i).shot=true;
-            ouch.play();
+        gunshot.rewind();
+        gunshot.play();
+        for (int i=0; i<targets.size(); i++) {
+          if (dist(mouseX, mouseY, targets.get(i).xTarget, targets.get(i).yTarget+50)<100&&dist(mouseX, mouseY, targets.get(i).xTarget, targets.get(i).yTarget+50)>20&&lives>0) {
+            score+=level;
+            targets.get(i).murpx=targets.get(i).xTarget;
+            targets.get(i).murpy=targets.get(i).yTarget;
+            targets.get(i).shot=true;
+            targetHit1.rewind();
+            targetHit1.play();
 
 
-            if (ducks.get(i).yDuck>1920) {
-              ducks.remove(i);
-              ouch.play();
+            if (targets.get(i).yTarget>1920) {
+              targets.remove(i);
+              targetHit1.rewind();
+              targetHit1.play();
             }
-          } else if (dist(mouseX, mouseY, ducks.get(i).xDuck, ducks.get(i).yDuck+50)<20&&dist(mouseX, mouseY, ducks.get(i).xDuck-50, ducks.get(i).yDuck)>0&&lives>0) {
-            score+=stage*3;
-            ducks.get(i).murpx=ducks.get(i).xDuck;
-            ducks.get(i).murpy=ducks.get(i).yDuck;
-            ducks.get(i).shot=true;
-            ducks.get(i).bull=true;
+          } else if (dist(mouseX, mouseY, targets.get(i).xTarget, targets.get(i).yTarget+50)<20&&dist(mouseX, mouseY, targets.get(i).xTarget-50, targets.get(i).yTarget)>0&&lives>0) {
+            score+=level*3;
+            targets.get(i).murpx=targets.get(i).xTarget;
+            targets.get(i).murpy=targets.get(i).yTarget;
+            targets.get(i).shot=true;
+            targets.get(i).bull=true;
 
-            if (ducks.get(i).yDuck>1920) {
-              ducks.remove(i);
-              ouch.play();
+            if (targets.get(i).yTarget>1920) {
+              targets.remove(i);
+              targetHit1.rewind();
+              targetHit1.play();
             }
           }
         }
